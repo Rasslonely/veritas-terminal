@@ -18,11 +18,13 @@ export default function ScanPage() {
   const router = useRouter();
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const analyzeEvidence = useAction(api.actions.gemini.analyzeEvidence);
+  const createClaim = useMutation(api.claims.createClaim);
   
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<EvidenceAnalysis | null>(null);
+  const [evidenceStorageId, setEvidenceStorageId] = useState<string | null>(null);
 
   const handleCapture = (imageSrc: string) => {
     setCapturedImage(imageSrc);
@@ -31,6 +33,8 @@ export default function ScanPage() {
 
   const handleRetake = () => {
     setCapturedImage(null);
+    setAnalysis(null);
+    setEvidenceStorageId(null);
     setIsCameraOpen(true);
   };
 
@@ -54,6 +58,7 @@ export default function ScanPage() {
         body: blob,
       });
       const { storageId } = await result.json();
+      setEvidenceStorageId(storageId);
 
       // 4. Analyze Image
       const analysisResult = await analyzeEvidence({ storageId });
@@ -64,6 +69,22 @@ export default function ScanPage() {
       alert("Analysis failed. Please try again.");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleCreateClaim = async () => {
+    if (!analysis || !evidenceStorageId || !capturedImage) return;
+    try {
+        const claimId = await createClaim({
+            evidenceImageUrl: capturedImage,
+            evidenceStorageId: evidenceStorageId,
+            analysis: analysis
+        });
+        
+        router.push(`/claims/${claimId}`);
+    } catch (e) {
+        console.error("Claim Creation Failed", e);
+        alert("Failed to file claim. Please try again.");
     }
   };
 
@@ -85,9 +106,18 @@ export default function ScanPage() {
             analysis ? (
                 <div className="w-full space-y-4">
                     <AnalysisResult analysis={analysis} isLoading={false} />
-                    <Button onClick={() => { setCapturedImage(null); setAnalysis(null); }} variant="outline" className="w-full">
-                        Scan Another Item
-                    </Button>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                        <Button onClick={() => { setCapturedImage(null); setAnalysis(null); }} variant="outline" className="w-full">
+                            Discard
+                        </Button>
+                        <Button 
+                            onClick={handleCreateClaim}
+                            className="w-full bg-primary text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                        >
+                            File Claim
+                        </Button>
+                    </div>
                 </div>
             ) : (
             <EvidenceViewer
