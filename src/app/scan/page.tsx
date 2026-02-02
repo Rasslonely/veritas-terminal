@@ -6,7 +6,10 @@ import { api } from "../../../convex/_generated/api";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { CameraOverlay } from "@/components/native/CameraOverlay";
 import { EvidenceViewer } from "@/components/claim/EvidenceViewer";
+import { AnalysisResult } from "@/components/claim/AnalysisResult";
 import { Button } from "@/components/ui/button";
+import { useAction } from "convex/react";
+import { EvidenceAnalysis } from "@/lib/schemas/ai";
 import { Camera, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
@@ -14,10 +17,12 @@ import { useRouter } from "next/navigation";
 export default function ScanPage() {
   const router = useRouter();
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const analyzeEvidence = useAction(api.actions.gemini.analyzeEvidence);
   
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [analysis, setAnalysis] = useState<EvidenceAnalysis | null>(null);
 
   const handleCapture = (imageSrc: string) => {
     setCapturedImage(imageSrc);
@@ -50,19 +55,13 @@ export default function ScanPage() {
       });
       const { storageId } = await result.json();
 
-      // 4. Navigate to Analysis Page with storageId
-      // In a real app we might create a draft claim here first
-      console.log("Uploaded storageId:", storageId);
+      // 4. Analyze Image
+      const analysisResult = await analyzeEvidence({ storageId });
+      setAnalysis(analysisResult);
       
-      // Navigate to claims or analysis (To be implemented Day 4)
-      // For now, just reset or show success
-      // router.push(`/claims/new?storageId=${storageId}`);
-      alert(`Evidence Securely Logged to HCS.\nStorage ID: ${storageId.slice(0, 10)}...`);
-      setCapturedImage(null);
-
     } catch (error) {
-      console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
+      console.error("Upload/Analysis failed:", error);
+      alert("Analysis failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -83,12 +82,21 @@ export default function ScanPage() {
         <div className="flex-1 flex flex-col items-center justify-center space-y-8">
           
           {capturedImage ? (
+            analysis ? (
+                <div className="w-full space-y-4">
+                    <AnalysisResult analysis={analysis} isLoading={false} />
+                    <Button onClick={() => { setCapturedImage(null); setAnalysis(null); }} variant="outline" className="w-full">
+                        Scan Another Item
+                    </Button>
+                </div>
+            ) : (
             <EvidenceViewer
               imageSrc={capturedImage}
               isUploading={isUploading}
               onRetake={handleRetake}
               onConfirm={handleConfirm}
             />
+            )
           ) : (
             <div className="text-center space-y-6">
               <div className="relative mx-auto">
