@@ -3,7 +3,7 @@ import { AuthCheck } from "../auth/AuthCheck";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen bg-black text-white pb-24 overflow-hidden selection:bg-emerald-500/30">
+    <div className="relative min-h-screen bg-black text-white pb-24 selection:bg-emerald-500/30">
       {/* Background Layer 1: Deep Gradient */}
       <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_50%_120%,#064e3b_0%,#000000_60%)]" />
 

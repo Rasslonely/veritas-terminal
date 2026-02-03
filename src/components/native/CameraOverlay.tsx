@@ -76,6 +76,12 @@ export function CameraOverlay({ onCapture, onClose }: CameraOverlayProps) {
             
             {/* Scanning Line Animation */}
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/80 shadow-[0_0_10px_rgba(59,130,246,0.8)] animate-[scan_2s_ease-in-out_infinite]" />
+            
+            {/* HUD Status Text */}
+            <div className="absolute -bottom-8 left-0 right-0 flex justify-between px-1">
+                <span className="text-[10px] text-primary/80 font-mono tracking-widest animate-pulse">RETICLE ACTIVE</span>
+                <span className="text-[10px] text-red-400/80 font-mono tracking-widest uppercase">LIVENESS CHECK: OFF</span>
+            </div>
           </div>
         </div>
       </div>

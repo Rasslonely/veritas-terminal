@@ -24,11 +24,11 @@ export function CommandDeck() {
   const activeAgents = 1024 + (recentClaims?.length || 0);
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono overflow-hidden relative bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-black to-black">
+    <div className="min-h-screen bg-black text-white font-mono relative bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-black to-black">
       {/* Background Dot Grid */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:20px_20px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
-      <div className="relative z-10 p-8 grid grid-cols-12 gap-6 h-screen">
+      <div className="relative z-10 p-8 grid grid-cols-12 gap-6 min-h-screen content-start">
         
         {/* LEFT COLUMN: HERO MAP & SCENE */}
         <div className="col-span-8 flex flex-col gap-6">
@@ -112,7 +112,7 @@ export function CommandDeck() {
             </div>
 
             {/* Live Feed */}
-            <div className="flex-1 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-4 font-mono text-xs overflow-hidden flex flex-col hover:border-emerald-500/30 transition-colors duration-300">
+            <div className="flex-1 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-4 font-mono text-xs flex flex-col hover:border-emerald-500/30 transition-colors duration-300 h-[400px]">
                 <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
                     <span className="text-emerald-500 font-bold tracking-widest">LIVE_FEED</span>
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />

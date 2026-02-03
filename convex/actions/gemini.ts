@@ -23,7 +23,7 @@ export const analyzeEvidence = action({
 
     // 3. Initialize Gemini Model
     const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
+        model: "gemini-2.5-flash",
         generationConfig: { responseMimeType: "application/json" } 
     });
 
@@ -54,9 +54,10 @@ export const analyzeEvidence = action({
 
     const text = result.response.text();
     
-    // 6. Validate with Zod
+    // 6. Clean and Validate
     try {
-        const json = JSON.parse(text);
+        const cleanedText = text.replace(/```json\n?|```/g, "").trim(); // Strip Markdown
+        const json = JSON.parse(cleanedText);
         const validated = EvidenceAnalysisSchema.parse(json);
         return validated;
     } catch (e) {

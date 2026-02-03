@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased overflow-hidden",
+        "min-h-screen bg-background font-sans antialiased",
         inter.variable
       )}>
         <Providers>
