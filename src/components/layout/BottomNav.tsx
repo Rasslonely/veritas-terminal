@@ -16,8 +16,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-black/80 backdrop-blur-xl pb-safe pt-2 px-6">
-      <div className="flex justify-between items-center h-16 max-w-md mx-auto">
+    <div className="fixed bottom-6 left-4 right-4 z-50">
+      <div className="bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl h-16 flex justify-between items-center px-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           const isMain = item.label === "Scan";
@@ -32,7 +32,7 @@ export function BottomNav() {
               )}
             >
               {isMain ? (
-                <div className="relative -top-5 bg-primary rounded-full p-4 shadow-[0_0_20px_rgba(59,130,246,0.6)] border-4 border-black">
+                <div className="relative -top-8 bg-emerald-500 rounded-full p-4 shadow-[0_0_20px_rgba(16,185,129,0.5)] border-4 border-black/90 group hover:scale-110 transition-transform">
                   <item.icon className="w-6 h-6 text-white" />
                 </div>
               ) : (

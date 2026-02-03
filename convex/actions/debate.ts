@@ -15,7 +15,7 @@ export const runAgentDebate = action({
 
     // Helper to log message
     const logMessage = async (role: string, name: string, content: string, round: number) => {
-        await ctx.runMutation(internal.actions.debateInternal.insertMessage, {
+        await ctx.runMutation(internal.debateInternal.insertMessage, {
             claimId,
             agentRole: role,
             agentName: name,
@@ -75,7 +75,7 @@ export const runAgentDebate = action({
     
     // Update Claim Status based on verdict
     const isApproved = judgeText.includes("APPROVED");
-    await ctx.runMutation(internal.actions.debateInternal.updateClaimStatus, {
+    await ctx.runMutation(internal.debateInternal.updateClaimStatus, {
         claimId,
         status: isApproved ? "APPROVED" : "REJECTED"
     });

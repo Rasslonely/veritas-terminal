@@ -73,3 +73,14 @@ export const getDebateMessages = query({
             .collect();
     }
 });
+
+export const getRecentClaims = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("claims")
+      .withIndex("by_created")
+      .order("desc")
+      .take(10);
+  },
+});
