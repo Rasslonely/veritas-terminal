@@ -16,8 +16,13 @@ const DUMMY_LOGS = [
   { id: 8, time: "10:43:12", node: "VTS-05", msg: "SYNCING_LEDGER_STATE" },
 ];
 
+import { VerdictCard } from "@/components/debate/VerdictCard";
+import { useState } from "react";
+import { X } from "lucide-react";
+
 export function CommandDeck() {
   const recentClaims = useQuery(api.claims.getRecentClaims) || [];
+  const [selectedClaim, setSelectedClaim] = useState<any>(null);
   
   // Calculate Stats
   const totalSecured = (recentClaims || []).reduce((acc: number, curr: any) => acc + (curr?.estimatedValue || 0), 12450000); // Base value
@@ -27,6 +32,27 @@ export function CommandDeck() {
     <div className="min-h-screen bg-black text-white font-mono relative bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-black to-black">
       {/* Background Dot Grid */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:20px_20px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+
+      {/* VERDICT OVERLAY MODAL */}
+      {selectedClaim && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+           <div className="relative w-full max-w-lg">
+              <button 
+                onClick={() => setSelectedClaim(null)}
+                className="absolute -top-4 -right-4 bg-white/10 hover:bg-white/20 rounded-full p-2 text-white transition-colors z-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <VerdictCard 
+                claimId={selectedClaim._id}
+                recipientAddress="0x5f80439206742Ac04e031665d1DFEDe11C9730aD" // Demo Address or from claim
+                confidenceScore={selectedClaim.confidence || 92}
+                analyzedSeverity={selectedClaim.severity || "CRITICAL_DAMAGE_DETECTED"}
+                payoutAmount="0.001"
+              />
+           </div>
+        </div>
+      )}
 
       <div className="relative z-10 p-8 grid grid-cols-12 gap-6 min-h-screen content-start">
         
@@ -120,11 +146,12 @@ export function CommandDeck() {
                 <div className="space-y-3 overflow-y-auto pr-2">
                     {/* Render Real Claims if map exists, else use dummy logs for visual fidelity */}
                     {recentClaims.length > 0 ? recentClaims.map((claim) => (
-                        <motion.div 
+                        <motion.button 
                             key={claim._id}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="flex gap-2 items-start border-l-2 border-emerald-500/20 pl-2"
+                            onClick={() => setSelectedClaim(claim)}
+                            className="flex gap-2 items-start border-l-2 border-emerald-500/20 pl-2 w-full text-left hover:bg-emerald-500/10 transition-colors p-2 rounded-r"
                         >
                             <span className="text-emerald-500/50 whitespace-nowrap">[{new Date(claim.createdAt).toLocaleTimeString()}]</span>
                             <div className="flex flex-col">
@@ -137,7 +164,7 @@ export function CommandDeck() {
                                 </span>
                                 <span className="text-[10px] text-white/40">STATUS: {claim.status}</span>
                             </div>
-                        </motion.div>
+                        </motion.button>
                     )) : DUMMY_LOGS.map((log) => (
                         <div key={log.id} className="flex gap-2 items-start opacity-70 border-l-2 border-emerald-500/10 pl-2">
                             <span className="text-emerald-500/50 whitespace-nowrap">[{log.time}]</span>

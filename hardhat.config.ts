@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from "dotenv";
 
+console.log("🛠️ Hardhat Config Loading...");
 dotenv.config({ path: ".env.local" });
 
 const config: HardhatUserConfig = {
