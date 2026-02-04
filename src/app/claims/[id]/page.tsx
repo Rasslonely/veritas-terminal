@@ -11,7 +11,8 @@ import { MatrixLog } from "@/components/debate/MatrixLog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Gavel, FileText, Activity } from "lucide-react";
+import { Gavel, FileText, Activity, DollarSign } from "lucide-react";
+import { useNetwork } from "@/context/NetworkContext";
 
 export default function ClaimPage({ params }: { params: { id: string } }) {
   const claimId = params.id as Id<"claims">;
@@ -30,16 +31,48 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
   // Using a local status to track if we should trigger the debate automatically or manual
   // For drama, manual trigger is better.
   
+  const { chainMode } = useNetwork();
+  
   const handleStartTribunal = async () => {
     if (!claim || !claim.initialAnalysis) return;
     setIsDebating(true);
     try {
-        await runDebate({ claimId, analysis: claim.initialAnalysis });
+        await runDebate({ 
+            claimId, 
+            analysis: claim.initialAnalysis,
+            chainMode 
+        });
     } catch (e) {
         console.error("Debate Error", e);
         alert("Council busy. Retrying connection...");
     } finally {
         setIsDebating(false);
+    }
+  };
+
+  const settleClaim = useAction(api.actions.debate.settleClaim);
+  const [isSettling, setIsSettling] = useState(false);
+
+  const handleSettle = async () => {
+    if (!claim || !claim.payoutAmount) return;
+    setIsSettling(true);
+    try {
+        // For demo, we pay to a dummy address if user wallet not connected
+        // In prod, use connected wallet
+        const recipient = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"; 
+        
+        await settleClaim({
+            claimId,
+            recipientAddress: recipient,
+            amount: claim.payoutAmount,
+            chainMode
+        });
+        alert(`Payout initiation on ${chainMode} successful!`);
+    } catch (e) {
+        console.error("Settlement Failed", e);
+        alert("Payout failed. Check console.");
+    } finally {
+        setIsSettling(false);
     }
   };
 
@@ -119,6 +152,16 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
                         className="w-full bg-primary/20 hover:bg-primary/40 text-primary border border-primary/50 h-12 text-lg font-bold tracking-widest shadow-[0_0_20px_rgba(59,130,246,0.4)] animate-pulse"
                     >
                         COMMENCE TRIBUNAL
+                    </Button>
+                )}
+
+                {!isSettling && claim.status === "APPROVED" && (
+                     <Button 
+                        onClick={handleSettle}
+                        className="w-full bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 border border-emerald-500/50 h-12 text-lg font-bold tracking-widest shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                    >
+                        <DollarSign className="w-5 h-5 mr-2" />
+                        SETTLE CLAIM ({claim.payoutCurrency || "USDC"})
                     </Button>
                 )}
             </TabsContent>

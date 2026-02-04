@@ -1,4 +1,5 @@
 import { BottomNav } from "./BottomNav";
+import { Header } from "./Header";
 import { AuthCheck } from "../auth/AuthCheck";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       <AuthCheck />
 
-      <main className="relative z-10 px-4 pt-6 max-w-md mx-auto">
+      <Header />
+
+      <main className="relative z-10 px-4 pt-20 max-w-md mx-auto">
         {children}
       </main>
 

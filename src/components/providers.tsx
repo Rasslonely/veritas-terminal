@@ -6,6 +6,7 @@ import { WagmiProvider } from "wagmi";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { config } from "@/lib/config";
 import "@rainbow-me/rainbowkit/styles.css";
+import { NetworkProvider } from "@/context/NetworkContext";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 const queryClient = new QueryClient();
@@ -21,11 +22,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
             overlayBlur: 'small',
           })}
         >
+        <NetworkProvider>
           <ConvexProvider client={convex}>
             {children}
           </ConvexProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  );
+        </NetworkProvider>
+      </RainbowKitProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
+);
 }

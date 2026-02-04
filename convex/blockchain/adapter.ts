@@ -23,8 +23,8 @@ export async function getAdapter(mode: "HEDERA" | "BASE"): Promise<IBlockchainAd
     const { HederaAdapter } = await import("./HederaAdapter");
     return new HederaAdapter();
   } else {
-    // const { BaseAdapter } = await import("./BaseAdapter");
-    // return new BaseAdapter();
-    throw new Error("Base Adapter not yet implemented");
+    // Dynamic import for Base Adapter
+    const { BaseAdapter } = await import("./BaseAdapter");
+    return new BaseAdapter();
   }
 }

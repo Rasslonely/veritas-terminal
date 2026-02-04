@@ -11,6 +11,7 @@
 import type * as actions_debate from "../actions/debate.js";
 import type * as actions_debateInternal from "../actions/debateInternal.js";
 import type * as actions_gemini from "../actions/gemini.js";
+import type * as blockchain_BaseAdapter from "../blockchain/BaseAdapter.js";
 import type * as blockchain_HederaAdapter from "../blockchain/HederaAdapter.js";
 import type * as blockchain_adapter from "../blockchain/adapter.js";
 import type * as claims from "../claims.js";
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   "actions/debate": typeof actions_debate;
   "actions/debateInternal": typeof actions_debateInternal;
   "actions/gemini": typeof actions_gemini;
+  "blockchain/BaseAdapter": typeof blockchain_BaseAdapter;
   "blockchain/HederaAdapter": typeof blockchain_HederaAdapter;
   "blockchain/adapter": typeof blockchain_adapter;
   claims: typeof claims;

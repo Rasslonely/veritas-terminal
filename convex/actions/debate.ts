@@ -9,9 +9,13 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 export const runAgentDebate = action({
-  args: { claimId: v.id("claims"), analysis: v.any() }, 
+  args: { 
+    claimId: v.id("claims"), 
+    analysis: v.any(),
+    chainMode: v.optional(v.string()) // "HEDERA" | "BASE"
+  }, 
   handler: async (ctx, args) => {
-    const { claimId, analysis } = args;
+    const { claimId, analysis, chainMode = "HEDERA" } = args;
 
     // Helper to log message
     const logMessage = async (role: string, name: string, content: string, round: number) => {
@@ -22,7 +26,7 @@ export const runAgentDebate = action({
             // Lazy load adapter (defaults to Hedera for Phase 3)
             // In a real app we might pass "BASE" based on user preference
             const { getAdapter } = await import("../blockchain/adapter");
-            const adapter = await getAdapter("HEDERA");
+            const adapter = await getAdapter(chainMode as "HEDERA" | "BASE" || "HEDERA");
             
             // Log to HCS
             txHash = await adapter.logEvidence(JSON.stringify({
