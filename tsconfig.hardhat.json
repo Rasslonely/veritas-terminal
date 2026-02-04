@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": ["hardhat.config.ts", "scripts/**/*.ts", "contracts/**/*.ts", "test/**/*.ts"]
+}
