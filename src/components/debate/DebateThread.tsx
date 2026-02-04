@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, ShieldAlert, Scale } from "lucide-react";
+import { HCSBadge } from "./HCSBadge";
 
 export function DebateThread({ claimId }: { claimId: Id<"claims"> }) {
   // Use 'any' or check if we need to regenerate types if getDebateMessages isn't showing up yet
@@ -61,9 +62,12 @@ export function DebateThread({ claimId }: { claimId: Id<"claims"> }) {
                   {msg.agentName}
                 </span>
               </div>
+
               <p className="text-sm leading-relaxed text-white/90">
                 {msg.content}
               </p>
+              
+              {msg.txHash && <HCSBadge txHash={msg.txHash} />}
             </Card>
           </div>
         );

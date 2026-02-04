@@ -51,6 +51,13 @@ export default defineSchema({
     settlementChain: v.optional(v.string()), // "HEDERA" | "BASE"
     settlementTxHash: v.optional(v.string()),
     
+    // ============================================
+    // NEW: LIVENESS (God-Tier Feature)
+    // ============================================
+    livenessStatus: v.optional(v.string()), // "PENDING", "CHALLENGED", "VERIFIED", "FAILED"
+    livenessChallenge: v.optional(v.string()), // "Place finger on crack"
+    livenessImageId: v.optional(v.string()),   // Storage ID of verification image
+    
     // Timestamps
     createdAt: v.number(),
     resolvedAt: v.optional(v.number()),
@@ -120,4 +127,26 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_entity", ["entityType", "entityId"]),
+
+  // ============================================
+  // UNDERWRITER POOLS (DeFi Layer)
+  // ============================================
+  underwriterPools: defineTable({
+    name: v.string(),           // "Gadget Protection", "Vehicle Claims"
+    totalStaked: v.number(),    // Total USDC in pool
+    totalClaims: v.number(),    // Claims paid out
+    apy: v.number(),            // Current APY %
+    riskLevel: v.string(),      // "LOW", "MEDIUM", "HIGH"
+    icon: v.optional(v.string()),
+  }),
+
+  underwriterStakes: defineTable({
+    userId: v.id("users"),
+    poolId: v.id("underwriterPools"),
+    amount: v.number(),
+    stakedAt: v.number(),
+    earnings: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_pool", ["poolId"]),
 });

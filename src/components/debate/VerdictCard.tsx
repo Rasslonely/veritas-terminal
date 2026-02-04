@@ -7,6 +7,7 @@ import { useVeritasVault } from "@/hooks/useVeritasVault";
 import { CheckCircle2, AlertTriangle, Loader2, DollarSign, Wallet, Receipt, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useHaptics } from "@/hooks/useHaptics";
 
 interface VerdictCardProps {
   claimId: string;
@@ -25,6 +26,7 @@ export function VerdictCard({
 }: VerdictCardProps) {
   
   const { payoutClaim, isConfirming, isProcessing, isConfirmed, hash } = useVeritasVault();
+  const { triggerHaptic } = useHaptics();
   
   // For testing UI without blockchain interaction, you can uncomment this:
   // const isConfirmed = true; 
@@ -101,7 +103,10 @@ export function VerdictCard({
                     </div>
 
                     <Button 
-                      onClick={() => payoutClaim(recipientAddress, claimId)}
+                      onClick={() => {
+                        triggerHaptic("heavy");
+                        payoutClaim(recipientAddress, claimId);
+                      }}
                       disabled={isConfirming || isProcessing}
                       className={cn(
                         "w-full h-12 text-sm font-bold tracking-widest uppercase transition-all duration-300 relative overflow-hidden group",

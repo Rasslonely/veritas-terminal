@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const storeUser = mutation({
@@ -22,5 +22,15 @@ export const storeUser = mutation({
     });
 
     return userId;
+  },
+});
+
+export const getUser = query({
+  args: { walletAddress: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_wallet", (q) => q.eq("walletAddress", args.walletAddress))
+      .first();
   },
 });

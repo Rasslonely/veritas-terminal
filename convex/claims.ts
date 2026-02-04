@@ -84,3 +84,17 @@ export const getRecentClaims = query({
       .take(10);
   },
 });
+
+export const updateLiveness = mutation({
+  args: {
+    claimId: v.id("claims"),
+    status: v.string(),
+    challenge: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.claimId, {
+      livenessStatus: args.status,
+      livenessChallenge: args.challenge,
+    });
+  },
+});

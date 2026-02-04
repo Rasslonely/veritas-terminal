@@ -9,6 +9,7 @@ export const insertMessage = internalMutation({
     content: v.string(),
     round: v.number(),
     isOnChain: v.boolean(),
+    txHash: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     await ctx.db.insert("debateMessages", {

@@ -1,12 +1,20 @@
 "use node";
 
-import { action } from "../_generated/server";
+import { ActionCtx, action } from "../_generated/server";
 import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { EvidenceAnalysisSchema } from "../../src/lib/schemas/ai";
+import { EvidenceAnalysisSchema, LivenessSchema } from "../../src/lib/schemas/ai";
 import { api } from "../_generated/api";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
+const LIVENESS_CHALLENGES = [
+  "Place your index finger pointing at the damage",
+  "Hold a coin next to the damaged area",
+  "Place a pen pointing at the damage",
+  "Show a thumbs up next to the object",
+  "Hold a piece of paper with today's date", // Harder to forge
+];
 
 export const analyzeEvidence = action({
   args: { storageId: v.string() },
@@ -65,4 +73,76 @@ export const analyzeEvidence = action({
         throw new Error("Failed to parse AI response");
     }
   },
+});
+
+export const requestLivenessChallenge = action({
+  args: { claimId: v.id("claims") },
+  handler: async (ctx, args) => {
+    const challenge = LIVENESS_CHALLENGES[Math.floor(Math.random() * LIVENESS_CHALLENGES.length)];
+    
+    await ctx.runMutation(api.claims.updateLiveness, {
+        claimId: args.claimId,
+        status: "CHALLENGED",
+        challenge
+    });
+    
+    return challenge;
+  },
+});
+
+export const verifyLiveness = action({
+  args: { 
+      claimId: v.id("claims"), 
+      storageId: v.string(), 
+      challenge: v.string() 
+  },
+  handler: async (ctx, args) => {
+      // 1. Get Image
+      const fileUrl = await ctx.storage.getUrl(args.storageId);
+      if (!fileUrl) throw new Error("File not found");
+      const res = await fetch(fileUrl);
+      const buffer = Buffer.from(await res.arrayBuffer()).toString("base64");
+
+      // 2. Gemini Analysis
+      const model = genAI.getGenerativeModel({ 
+          model: "gemini-2.5-flash",
+          generationConfig: { responseMimeType: "application/json" } 
+      });
+
+      const prompt = `
+        VERITAS LIVENESS CHECK.
+        Challenge Issued: "${args.challenge}"
+        
+        Analyze this image.
+        1. Does the user COMPLY with the challenge?
+        2. Is this a REAL photo (depth, lighting) or a screen capture?
+        
+        Output JSON:
+        {
+          "complied": boolean,
+          "isLive": boolean,
+          "confidence": number,
+          "reasoning": string
+        }
+      `;
+
+      const result = await model.generateContent([
+        prompt,
+        { inlineData: { data: buffer, mimeType: "image/jpeg" } }
+      ]);
+
+      const text = result.response.text();
+      const json = JSON.parse(text.replace(/```json\n?|```/g, "").trim());
+      const analysis = LivenessSchema.parse(json);
+
+      // 3. Update Status
+      const isVerified = analysis.complied && analysis.isLive && analysis.confidence > 70;
+      
+      await ctx.runMutation(api.claims.updateLiveness, {
+          claimId: args.claimId,
+          status: isVerified ? "VERIFIED" : "FAILED",
+      });
+
+      return { success: isVerified, analysis };
+  }
 });

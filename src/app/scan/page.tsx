@@ -13,28 +13,86 @@ import { EvidenceAnalysis } from "@/lib/schemas/ai";
 import { Camera, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { LivenessChallenge } from "@/components/claim/LivenessChallenge";
 
 export default function ScanPage() {
   const router = useRouter();
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const analyzeEvidence = useAction(api.actions.gemini.analyzeEvidence);
   const createClaim = useMutation(api.claims.createClaim);
+  const requestLiveness = useAction(api.actions.gemini.requestLivenessChallenge);
+  const verifyLiveness = useAction(api.actions.gemini.verifyLiveness);
   
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [cameraMode, setCameraMode] = useState<"EVIDENCE" | "LIVENESS">("EVIDENCE");
+  
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<EvidenceAnalysis | null>(null);
   const [evidenceStorageId, setEvidenceStorageId] = useState<string | null>(null);
 
-  const handleCapture = (imageSrc: string) => {
-    setCapturedImage(imageSrc);
+  // Liveness State
+  const [activeClaimId, setActiveClaimId] = useState<string | null>(null);
+  const [challenge, setChallenge] = useState<string | null>(null);
+  const [showLivenessOverlay, setShowLivenessOverlay] = useState(false);
+
+  const handleCapture = async (imageSrc: string) => {
     setIsCameraOpen(false);
+
+    if (cameraMode === "EVIDENCE") {
+        setCapturedImage(imageSrc);
+    } else if (cameraMode === "LIVENESS") {
+        // Verify Liveness
+        if (!activeClaimId || !challenge) return;
+        
+        try {
+            setIsUploading(true);
+            const postUrl = await generateUploadUrl();
+            const res = await fetch(imageSrc);
+            const blob = await res.blob();
+            await fetch(postUrl, {
+                method: "POST",
+                headers: { "Content-Type": blob.type },
+                body: blob,
+            });
+            // We need to get storageId again, simplified here assuming we get it from result or use a second generate call
+            // Actually, let's just do the upload properly
+             const uploadRes = await fetch(postUrl, {
+                method: "POST",
+                headers: { "Content-Type": blob.type },
+                body: blob,
+            });
+            const { storageId } = await uploadRes.json();
+
+            const result = await verifyLiveness({
+                claimId: activeClaimId as any,
+                storageId,
+                challenge
+            });
+
+            if (result.success) {
+                router.push(`/claims/${activeClaimId}`);
+            } else {
+                alert(`Liveness Check Failed: ${result.analysis.reasoning}`);
+                setChallenge(null);
+                setShowLivenessOverlay(false);
+                // Maybe reset claim or allow retry?
+            }
+
+        } catch (e) {
+            console.error(e);
+            alert("Verification error");
+        } finally {
+            setIsUploading(false);
+        }
+    }
   };
 
   const handleRetake = () => {
     setCapturedImage(null);
     setAnalysis(null);
     setEvidenceStorageId(null);
+    setCameraMode("EVIDENCE");
     setIsCameraOpen(true);
   };
 
@@ -43,24 +101,17 @@ export default function ScanPage() {
 
     try {
       setIsUploading(true);
-
-      // 1. Get Upload URL
       const postUrl = await generateUploadUrl();
-
-      // 2. Convert Base64 to Blob
       const res = await fetch(capturedImage);
       const blob = await res.blob();
-
-      // 3. Upload File
-      const result = await fetch(postUrl, {
+      const uploadRes = await fetch(postUrl, {
         method: "POST",
         headers: { "Content-Type": blob.type },
         body: blob,
       });
-      const { storageId } = await result.json();
+      const { storageId } = await uploadRes.json();
       setEvidenceStorageId(storageId);
 
-      // 4. Analyze Image
       const analysisResult = await analyzeEvidence({ storageId });
       setAnalysis(analysisResult);
       
@@ -81,7 +132,13 @@ export default function ScanPage() {
             analysis: analysis
         });
         
-        router.push(`/claims/${claimId}`);
+        setActiveClaimId(claimId);
+        
+        // Start Liveness Flow
+        const challengeText = await requestLiveness({ claimId });
+        setChallenge(challengeText);
+        setShowLivenessOverlay(true);
+
     } catch (e) {
         console.error("Claim Creation Failed", e);
         alert("Failed to file claim. Please try again.");
@@ -99,6 +156,21 @@ export default function ScanPage() {
 
   return (
     <DashboardLayout>
+      {showLivenessOverlay && challenge && (
+        <LivenessChallenge 
+            challenge={challenge}
+            onCapture={() => {
+                setShowLivenessOverlay(false);
+                setCameraMode("LIVENESS");
+                setIsCameraOpen(true);
+            }}
+            onCancel={() => {
+                setShowLivenessOverlay(false);
+                alert("Creation cancelled");
+            }}
+        />
+      )}
+
       <div className="flex flex-col h-[calc(100vh-140px)] w-full max-w-md mx-auto relative">
         <div className="flex-1 flex flex-col items-center justify-center space-y-8">
           
@@ -115,7 +187,7 @@ export default function ScanPage() {
                             onClick={handleCreateClaim}
                             className="w-full bg-primary text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                         >
-                            File Claim
+                            {isUploading ? "Processing..." : "File Claim & Verify"}
                         </Button>
                     </div>
                 </div>
@@ -132,7 +204,10 @@ export default function ScanPage() {
               <div className="relative mx-auto">
                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
                 <Button
-                  onClick={() => setIsCameraOpen(true)}
+                  onClick={() => {
+                      setCameraMode("EVIDENCE");
+                      setIsCameraOpen(true);
+                  }}
                   className="relative w-24 h-24 rounded-full border-4 border-white/10 bg-black hover:bg-black/80 flex flex-col items-center justify-center gap-2 group transition-all duration-500 hover:scale-105 hover:border-primary/50"
                 >
                   <Camera className="w-8 h-8 text-white group-hover:text-primary transition-colors" />

@@ -15,13 +15,37 @@ export const runAgentDebate = action({
 
     // Helper to log message
     const logMessage = async (role: string, name: string, content: string, round: number) => {
+        let txHash: string | undefined;
+        let isOnChain = false;
+
+        try {
+            // Lazy load adapter (defaults to Hedera for Phase 3)
+            // In a real app we might pass "BASE" based on user preference
+            const { getAdapter } = await import("../blockchain/adapter");
+            const adapter = await getAdapter("HEDERA");
+            
+            // Log to HCS
+            txHash = await adapter.logEvidence(JSON.stringify({
+                claimId,
+                role,
+                content,
+                round,
+                timestamp: Date.now()
+            }));
+            
+            if (txHash) isOnChain = true;
+        } catch (err) {
+            console.warn("⚠️ Blockchain logging failed (Demo Mode - Continuing off-chain):", err);
+        }
+
         await ctx.runMutation(internal.debateInternal.insertMessage, {
             claimId,
             agentRole: role,
             agentName: name,
             content,
             round,
-            isOnChain: false,
+            isOnChain,
+            txHash,
         });
     };
 

@@ -8,3 +8,12 @@ export const EvidenceAnalysisSchema = z.object({
 });
 
 export type EvidenceAnalysis = z.infer<typeof EvidenceAnalysisSchema>;
+
+export const LivenessSchema = z.object({
+  complied: z.boolean().describe("Whether the user followed the specific physical instruction"),
+  isLive: z.boolean().describe("Whether the image appears to be a real photo and not a screen capture"),
+  confidence: z.number().min(0).max(100),
+  reasoning: z.string().describe("Why the AI believes the user complied or failed"),
+});
+
+export type LivenessResult = z.infer<typeof LivenessSchema>;
