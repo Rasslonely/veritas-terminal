@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, Smartphone, Laptop, Camera, Car, Zap, User as UserIcon } from "lucide-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { ClaimsList } from "@/components/claim/ClaimsList";
 
 export default function ProfilePage() {
     // Demo User Data
@@ -39,13 +40,18 @@ export default function ProfilePage() {
                 </div>
 
                 <Tabs defaultValue="wallet" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 bg-white/5">
-                        <TabsTrigger value="wallet">Policy Wallet</TabsTrigger>
-                        <TabsTrigger value="store">Flash Store</TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-3 bg-white/5">
+                        <TabsTrigger value="wallet">Wallet</TabsTrigger>
+                        <TabsTrigger value="history">History</TabsTrigger>
+                        <TabsTrigger value="store">Store</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="wallet" className="mt-4 space-y-4">
                         <ActivePolicies />
+                    </TabsContent>
+
+                    <TabsContent value="history" className="mt-4">
+                         <ClaimsList />
                     </TabsContent>
 
                     <TabsContent value="store" className="mt-4">

@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 export function FieldView() {
   return (
     <DashboardLayout>
-      <div className="flex flex-col items-center justify-center pt-8 text-center space-y-10 min-h-[80vh]">
+      <div className="flex flex-col items-center justify-center pt-8 text-center space-y-10 min-h-[80vh] w-full">
         
         {/* HERO: Animated Scanner Reticle */}
         <div className="relative group cursor-pointer">

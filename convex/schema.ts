@@ -110,6 +110,8 @@ export default defineSchema({
     durationHours: v.number(),
     status: v.string(),
     createdAt: v.number(),
+    tokenId: v.optional(v.string()),
+    mintTxHash: v.optional(v.string()),
   })
     .index("by_user", ["userId"]),
     

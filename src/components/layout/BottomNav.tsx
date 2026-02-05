@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { label: "Home", icon: Home, href: "/" },
   { label: "Feed", icon: Scale, href: "/dashboard/feed" },
   { label: "Scan", icon: Camera, href: "/scan" },
-  { label: "Claims", icon: ShieldAlert, href: "/claims" },
+  { label: "Earn", icon: Wallet, href: "/dashboard/defi" },
   { label: "Profile", icon: User, href: "/profile" },
 ];
 

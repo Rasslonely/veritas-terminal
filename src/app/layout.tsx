@@ -4,6 +4,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 import { SmoothScroll } from "@/components/ui/SmoothScroll";
+import { BottomNav } from "@/components/layout/BottomNav";
+import { Header } from "@/components/layout/Header";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -29,13 +31,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
+        "min-h-screen bg-background font-sans antialiased overflow-x-hidden",
         inter.variable
       )}>
         <Providers>
           <SmoothScroll>
+            <Header />
             {children}
           </SmoothScroll>
+          <BottomNav />
         </Providers>
       </body>
     </html>

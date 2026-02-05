@@ -10,7 +10,7 @@ export default function DeFiPage() {
     <DashboardLayout>
       <div className="max-w-4xl mx-auto space-y-8 pb-20">
         <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">DeFi Underwriting</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Earn Yield</h1>
             <p className="text-muted-foreground">
                 Participate in the Veritas ecosystem by staking capital to secure truth.
             </p>
