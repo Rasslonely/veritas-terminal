@@ -2154,3 +2154,48 @@ const DEMO_CLAIMS = [
 > *Built with ❤️ for the future of trustless verification.*
 >
 > **VERITAS TERMINAL** — *Where AI meets Blockchain meets Reality.*
+
+---
+
+## 8. Implementation Roadmap (Completed)
+
+### Phase 1: Core Architecture 
+- [x] Next.js 14 Setup + Tailwind/Shadcn
+- [x] Convex Backend Init
+- [x] Basic Camera UI (`/scan`)
+
+### Phase 2: The "Golden Trinity" UI
+- [x] Glassmorphism Layout
+- [x] Framer Motion Micro-interactions
+- [x] Magic UI Integation
+
+### Phase 3: Hedera Trust Layer
+- [x] `HederaAdapter.ts` (HCS Logging)
+- [x] "Simon Says" Liveness Check
+- [x] Hall of Justice (Feed)
+
+### Phase 4: Base L2 Integration (Polymorphic Backend)
+- [x] `BaseAdapter.ts` (EVM Settlement)
+- [x] Network Toggle (Header UI)
+- [x] Multi-chain `settleClaim` action
+
+### Phase 5: Mobile "Field Agent" Mode
+- [x] PWA Manifest & Icons
+- [x] Haptic Feedback Engine
+- [x] Viewport Optimization
+
+### Phase 6: User Dashboard
+- [x] Claims History (`/claims`)
+- [x] `getUserClaims` Query
+
+### Phase 7: Flash Insurance (God Tier)
+- [x] Policy Wallet (`/profile`)
+- [x] "Flash Store" for instant coverage
+- [x] `microPolicies` backend logic
+
+---
+
+## 9. Future Frontiers (Post-Hackathon)
+1. **Zk-Proof Liveness**: Replace "Simon Says" with Zero-Knowledge biometric proofs.
+2. **DeFi Yield**: Connect Underwriter Pools to Aave/Compound for yield on idle float.
+3. **Hardware Oracle**: Integration with "Veritas Lens" (Custom ESP32 Camera Hardware).

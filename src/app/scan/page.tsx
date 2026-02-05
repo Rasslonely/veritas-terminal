@@ -145,6 +145,13 @@ export default function ScanPage() {
     }
   };
 
+  // Helper for Haptic Feedback
+  const triggerHaptic = () => {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+  };
+
   if (isCameraOpen) {
     return (
       <CameraOverlay 
@@ -205,6 +212,7 @@ export default function ScanPage() {
                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
                 <Button
                   onClick={() => {
+                      triggerHaptic();
                       setCameraMode("EVIDENCE");
                       setIsCameraOpen(true);
                   }}

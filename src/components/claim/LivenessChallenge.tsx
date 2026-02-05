@@ -76,7 +76,10 @@ export function LivenessChallenge({ challenge, onCapture, onCancel }: LivenessCh
                     <Button 
                         size="lg" 
                         className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold h-12 text-md shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]"
-                        onClick={onCapture}
+                        onClick={() => {
+                            if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(50);
+                            onCapture();
+                        }}
                     >
                         <Camera className="w-5 h-5 mr-2" />
                         Capture Verification

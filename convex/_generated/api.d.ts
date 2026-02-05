@@ -18,6 +18,7 @@ import type * as claims from "../claims.js";
 import type * as debateInternal from "../debateInternal.js";
 import type * as feed from "../feed.js";
 import type * as files from "../files.js";
+import type * as policies from "../policies.js";
 import type * as underwriters from "../underwriters.js";
 import type * as users from "../users.js";
 
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   debateInternal: typeof debateInternal;
   feed: typeof feed;
   files: typeof files;
+  policies: typeof policies;
   underwriters: typeof underwriters;
   users: typeof users;
 }>;

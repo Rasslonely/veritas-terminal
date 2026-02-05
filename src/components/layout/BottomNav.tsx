@@ -9,9 +9,8 @@ import { useHaptics } from "@/hooks/useHaptics";
 
 const NAV_ITEMS = [
   { label: "Home", icon: Home, href: "/" },
-  { label: "Feed", icon: Scale, href: "/dashboard/feed" }, // Hall of Justice
-  { label: "DeFi", icon: Wallet, href: "/dashboard/defi" },
-  { label: "Scan", icon: Camera, href: "/scan" }, // Central action
+  { label: "Feed", icon: Scale, href: "/dashboard/feed" },
+  { label: "Scan", icon: Camera, href: "/scan" },
   { label: "Claims", icon: ShieldAlert, href: "/claims" },
   { label: "Profile", icon: User, href: "/profile" },
 ];
@@ -21,7 +20,7 @@ export function BottomNav() {
   const { triggerHaptic } = useHaptics();
 
   return (
-    <div className="fixed bottom-6 left-4 right-4 z-50">
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-6">
       <div className="bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl h-16 flex justify-between items-center px-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;

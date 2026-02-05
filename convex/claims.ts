@@ -85,6 +85,25 @@ export const getRecentClaims = query({
   },
 });
 
+export const getUserClaims = query({
+  args: { userId: v.optional(v.id("users")) },
+  handler: async (ctx, args) => {
+    if (!args.userId) {
+        // Return empty or recent if no user
+         return await ctx.db
+            .query("claims")
+            .withIndex("by_created")
+            .order("desc")
+            .take(20);
+    }
+    return await ctx.db
+      .query("claims")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId!))
+      .order("desc")
+      .take(50);
+  },
+});
+
 export const updateLiveness = mutation({
   args: {
     claimId: v.id("claims"),
