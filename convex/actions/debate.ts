@@ -109,3 +109,34 @@ export const runAgentDebate = action({
     });
   },
 });
+
+export const settleClaim = action({
+  args: { 
+    claimId: v.id("claims"), 
+    recipientAddress: v.string(),
+    amount: v.number(),
+    chainMode: v.optional(v.string())
+  }, 
+  handler: async (ctx, args) => {
+    const { claimId, recipientAddress, amount, chainMode = "BASE" } = args;
+
+    // Load Adapter
+    const { getAdapter } = await import("../blockchain/adapter");
+    const adapter = await getAdapter(chainMode as "HEDERA" | "BASE" || "BASE");
+
+    // Execute Payout
+    console.log(`Initiating Settlement on ${chainMode} to ${recipientAddress} for ${amount}...`);
+    const success = await adapter.payoutClaim(amount, recipientAddress);
+
+    if (success) {
+       await ctx.runMutation(internal.debateInternal.updateClaimStatus, {
+           claimId,
+           status: "SETTLED"
+       });
+    } else {
+        throw new Error(`Blockchain payout failed on ${chainMode}. Check server logs for gas/balance issues.`);
+    }
+    
+    return success;
+  },
+});

@@ -3,6 +3,8 @@
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+// import { PolicyStore } from "@/components/policy/PolicyStore";
+import { AgentLicense } from "@/components/agent/AgentLicense";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,8 +41,14 @@ export default function ProfilePage() {
                      </div>
                 </div>
 
-                <Tabs defaultValue="wallet" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 bg-white/5">
+                {/* IDENTITY SECTION */}
+        <section className="px-4">
+             <AgentLicense />
+        </section>
+
+        {/* TABS SECTION */}
+        <Tabs defaultValue="wallet" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-white/5">
                         <TabsTrigger value="wallet">Wallet</TabsTrigger>
                         <TabsTrigger value="history">History</TabsTrigger>
                         <TabsTrigger value="store">Store</TabsTrigger>
@@ -54,9 +62,10 @@ export default function ProfilePage() {
                          <ClaimsList />
                     </TabsContent>
 
-                    <TabsContent value="store" className="mt-4">
-                         <PolicyStore />
-                    </TabsContent>
+                        <TabsContent value="store" className="mt-4">
+                            {/* <PolicyStore /> */}
+                            <div className="text-white/50 text-center py-10">Store Coming Soon</div>
+                        </TabsContent>
                 </Tabs>
             </div>
         </DashboardLayout>

@@ -36,10 +36,14 @@ export default function RootLayout({
       )}>
         <Providers>
           <SmoothScroll>
-            <Header />
+            <div className="md:hidden">
+              <Header />
+            </div>
             {children}
           </SmoothScroll>
-          <BottomNav />
+          <div className="md:hidden">
+            <BottomNav />
+          </div>
         </Providers>
       </body>
     </html>

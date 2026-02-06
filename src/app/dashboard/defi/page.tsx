@@ -2,10 +2,16 @@
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { UnderwriterPools } from "@/components/defi/UnderwriterPools";
+import { MyPortfolio } from "@/components/defi/MyPortfolio";
+import { RiskAnalytics } from "@/components/defi/RiskAnalytics";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function DeFiPage() {
+  const { isConnected } = useAccount();
+
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto space-y-8 pb-20">
@@ -28,15 +34,18 @@ export default function DeFiPage() {
             </TabsContent>
 
             <TabsContent value="portfolio">
-                <GlassCard className="h-[300px] flex items-center justify-center text-muted-foreground">
-                    Connect Wallet to view portfolio.
-                </GlassCard>
+                {isConnected ? (
+                    <MyPortfolio />
+                ) : (
+                    <GlassCard className="h-[300px] flex flex-col gap-4 items-center justify-center text-muted-foreground">
+                        <p>Connect Wallet to view your active positions.</p>
+                        <ConnectButton />
+                    </GlassCard>
+                )}
             </TabsContent>
             
             <TabsContent value="analytics">
-                <GlassCard className="h-[300px] flex items-center justify-center text-muted-foreground">
-                    Advanced analytics coming in Phase 4.
-                </GlassCard>
+                <RiskAnalytics />
             </TabsContent>
         </Tabs>
       </div>

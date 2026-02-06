@@ -123,9 +123,14 @@ export default function ScanPage() {
     }
   };
 
+  const [isCreating, setIsCreating] = useState(false);
+
+  // ... (previous code)
+
   const handleCreateClaim = async () => {
-    if (!analysis || !evidenceStorageId || !capturedImage) return;
+    if (!analysis || !evidenceStorageId || !capturedImage || isCreating) return;
     try {
+        setIsCreating(true);
         const claimId = await createClaim({
             evidenceImageUrl: capturedImage,
             evidenceStorageId: evidenceStorageId,
@@ -142,6 +147,8 @@ export default function ScanPage() {
     } catch (e) {
         console.error("Claim Creation Failed", e);
         alert("Failed to file claim. Please try again.");
+    } finally {
+        setIsCreating(false);
     }
   };
 
@@ -191,10 +198,11 @@ export default function ScanPage() {
                             Discard
                         </Button>
                         <Button 
+                            disabled={isCreating}
                             onClick={handleCreateClaim}
                             className="w-full bg-primary text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                         >
-                            {isUploading ? "Processing..." : "File Claim & Verify"}
+                            {isCreating ? "Creating Claim..." : "File Claim & Verify"}
                         </Button>
                     </div>
                 </div>
