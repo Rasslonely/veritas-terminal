@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useHaptic } from "@/hooks/useHaptic";
+import { useAudio } from "@/hooks/useAudio";
 
 const NAV_ITEMS = [
   { label: "Home", icon: Home, href: "/" },
@@ -17,7 +18,8 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   const pathname = usePathname();
-  const { triggerHaptic } = useHaptics();
+  const { impact } = useHaptic();
+  const { playClick } = useAudio();
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-6">
@@ -30,7 +32,11 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => triggerHaptic(isMain ? "impact" : "selection")}
+              onClick={() => {
+                  if (isMain) impact.medium();
+                  else impact.light();
+                  playClick();
+              }}
               className={cn(
                 "relative flex flex-col items-center justify-center transition-all duration-200 z-10 w-12",
                 isActive ? "text-emerald-400" : "text-white/40 hover:text-white"

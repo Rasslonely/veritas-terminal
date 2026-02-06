@@ -14,6 +14,8 @@ import { Camera, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { LivenessChallenge } from "@/components/claim/LivenessChallenge";
+import { useHaptic } from "@/hooks/useHaptic";
+import { useAudio } from "@/hooks/useAudio";
 
 export default function ScanPage() {
   const router = useRouter();
@@ -22,6 +24,10 @@ export default function ScanPage() {
   const createClaim = useMutation(api.claims.createClaim);
   const requestLiveness = useAction(api.actions.gemini.requestLivenessChallenge);
   const verifyLiveness = useAction(api.actions.gemini.verifyLiveness);
+  const { impact, notification } = useHaptic();
+  const { playClick, playSuccess, playError, playScan } = useAudio();
+  
+
   
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [cameraMode, setCameraMode] = useState<"EVIDENCE" | "LIVENESS">("EVIDENCE");
@@ -38,6 +44,7 @@ export default function ScanPage() {
 
   const handleCapture = async (imageSrc: string) => {
     setIsCameraOpen(false);
+    playClick(); // Shutter Sound
 
     if (cameraMode === "EVIDENCE") {
         setCapturedImage(imageSrc);
@@ -55,8 +62,7 @@ export default function ScanPage() {
                 headers: { "Content-Type": blob.type },
                 body: blob,
             });
-            // We need to get storageId again, simplified here assuming we get it from result or use a second generate call
-            // Actually, let's just do the upload properly
+            
              const uploadRes = await fetch(postUrl, {
                 method: "POST",
                 headers: { "Content-Type": blob.type },
@@ -76,7 +82,6 @@ export default function ScanPage() {
                 alert(`Liveness Check Failed: ${result.analysis.reasoning}`);
                 setChallenge(null);
                 setShowLivenessOverlay(false);
-                // Maybe reset claim or allow retry?
             }
 
         } catch (e) {
@@ -101,6 +106,9 @@ export default function ScanPage() {
 
     try {
       setIsUploading(true);
+      playScan(); // "Computing..." sound
+      impact.light();
+      
       const postUrl = await generateUploadUrl();
       const res = await fetch(capturedImage);
       const blob = await res.blob();
@@ -115,8 +123,13 @@ export default function ScanPage() {
       const analysisResult = await analyzeEvidence({ storageId });
       setAnalysis(analysisResult);
       
+      playSuccess(); // Success chime
+      notification.success();
+
     } catch (error) {
       console.error("Upload/Analysis failed:", error);
+      playError();
+      notification.error();
       alert("Analysis failed. Please try again.");
     } finally {
       setIsUploading(false);
@@ -125,11 +138,11 @@ export default function ScanPage() {
 
   const [isCreating, setIsCreating] = useState(false);
 
-  // ... (previous code)
-
   const handleCreateClaim = async () => {
     if (!analysis || !evidenceStorageId || !capturedImage || isCreating) return;
     try {
+        impact.heavy();
+        playClick();
         setIsCreating(true);
         const claimId = await createClaim({
             evidenceImageUrl: capturedImage,
@@ -146,16 +159,10 @@ export default function ScanPage() {
 
     } catch (e) {
         console.error("Claim Creation Failed", e);
+        playError();
         alert("Failed to file claim. Please try again.");
     } finally {
         setIsCreating(false);
-    }
-  };
-
-  // Helper for Haptic Feedback
-  const triggerHaptic = () => {
-    if (typeof navigator !== "undefined" && navigator.vibrate) {
-        navigator.vibrate(50);
     }
   };
 
@@ -210,7 +217,7 @@ export default function ScanPage() {
             <EvidenceViewer
               imageSrc={capturedImage}
               isUploading={isUploading}
-              onRetake={handleRetake}
+              onRetake={() => { playClick(); handleRetake(); }}
               onConfirm={handleConfirm}
             />
             )
@@ -220,7 +227,8 @@ export default function ScanPage() {
                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
                 <Button
                   onClick={() => {
-                      triggerHaptic();
+                      impact.medium();
+                      playClick();
                       setCameraMode("EVIDENCE");
                       setIsCameraOpen(true);
                   }}
