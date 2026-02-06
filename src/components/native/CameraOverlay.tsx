@@ -1,16 +1,13 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
 import { Camera, RefreshCw, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const videoConstraints = {
-  facingMode: "environment",
-  width: { ideal: 1920 },
-  height: { ideal: 1080 },
-};
+
 
 interface CameraOverlayProps {
   onCapture: (imageSrc: string) => void;
@@ -19,12 +16,24 @@ interface CameraOverlayProps {
 
 export function CameraOverlay({ onCapture, onClose }: CameraOverlayProps) {
   const webcamRef = useRef<Webcam>(null);
+
   const [isReady, setIsReady] = useState(false);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+  
+  // Mobile-optimized constraints (Allow native aspect ratio to prevent zoom/cropping)
+  const videoConstraints = {
+    facingMode,
+  };
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
-      // Haptic feedback if available
       if (typeof navigator !== "undefined" && navigator.vibrate) {
         navigator.vibrate(50);
       }
@@ -32,8 +41,10 @@ export function CameraOverlay({ onCapture, onClose }: CameraOverlayProps) {
     }
   }, [onCapture]);
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] bg-black flex flex-col h-[100dvh] w-screen touch-none overscroll-none">
       {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-20 p-4 flex justify-between items-start bg-gradient-to-b from-black/80 to-transparent pb-10">
         <Button
@@ -63,6 +74,7 @@ export function CameraOverlay({ onCapture, onClose }: CameraOverlayProps) {
             isReady ? "opacity-100" : "opacity-0"
           )}
           onUserMedia={() => setIsReady(true)}
+          mirrored={facingMode === "user"}
         />
         
         {/* Reticle Overlay */}
@@ -106,12 +118,16 @@ export function CameraOverlay({ onCapture, onClose }: CameraOverlayProps) {
           size="icon"
           className="text-white hover:bg-white/20 rounded-full"
           onClick={() => {
-             // Basic switch camera logic would go here, requiring state management for constraints
+             setIsReady(false); // Fade out to hide transition glitches
+             setTimeout(() => {
+                 setFacingMode(prev => prev === "environment" ? "user" : "environment");
+             }, 200); // Tiny delay to ensure fade starts
           }}
         >
-          <RefreshCw className="w-6 h-6 opacity-50" />
+          <RefreshCw className="w-6 h-6" />
         </Button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

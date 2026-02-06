@@ -34,7 +34,7 @@ export const ingestPolicy = action({
 
     // 3. Embed & Store Chunks
     // 3. Embed & Store Chunks
-    const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
+    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
     for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
@@ -60,7 +60,7 @@ export const ingestPolicy = action({
 export const retrieveContext = action({
     args: { query: v.string() },
     handler: async (ctx, args): Promise<string> => {
-        const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
+        const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
         
         // 1. Embed Query
         const result = await model.embedContent(args.query);

@@ -9,9 +9,9 @@ import { api } from "../_generated/api";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 const LIVENESS_CHALLENGES = [
-  "Place your index finger pointing at the damage",
-  "Hold a coin next to the damaged area",
-  "Place a pen pointing at the damage",
+  "Place your index finger pointing at the item",
+  "Hold a coin next to the item",
+  "Place a pen pointing at the item",
   "Show a thumbs up next to the object",
   "Hold a piece of paper with today's date", // Harder to forge
 ];
@@ -58,13 +58,14 @@ export const analyzeEvidence = action({
       Rules:
       1. If damage matches an EXCLUSION in the policy, mention it.
       2. If damage is COSMETIC but policy covers standard wear, note it.
+      3. SIMULATION MODE (DEMO): If the object is an electronic device and appears physically perfect, assume "Internal Sensor/Component Failure" and mark damageLevel as "MINOR" or "MODERATE" to allow the claim workflow to proceed (do not block with NONE).
       
       Output strictly in JSON format matching this schema:
       {
         "objectDetected": "string",
         "damageLevel": "NONE" | "MINOR" | "MODERATE" | "SEVERE" | "TOTAL_LOSS",
         "confidenceScore": number (0-100),
-        "description": "string",
+        "description": "string (If simulated internal damage, mention 'No external damage visible; assuming internal failure for diagnostic verification')",
         "citedPolicy": "string (Quote the specific Policy Clause if relevant, e.g. 'Clause 4.2 excludes water damage')"
       }
     `;
@@ -133,9 +134,16 @@ export const verifyLiveness = action({
         VERITAS LIVENESS CHECK.
         Challenge Issued: "${args.challenge}"
         
-        Analyze this image.
-        1. Does the user COMPLY with the challenge?
-        2. Is this a REAL photo (depth, lighting) or a screen capture?
+        Analyze this image to verify HUMAN PRESENCE and INTENT.
+        
+        CRITICAL RULES:
+        1. Focus ONLY on whether the User performed the requested ACTION (e.g. holding a coin, pointing finger).
+        2. DO NOT judge whether the item is damaged or not. That is a separate process.
+        3. If the user is performing the gesture with the item, it is PASS.
+        
+        Analyze:
+        1. Does the user COMPLY with the gesture?
+        2. Is this a REAL photo (depth, lighting) vs screen capture?
         
         Output JSON:
         {

@@ -10,6 +10,7 @@ export const createClaim = mutation({
         damageLevel: v.string(),
         confidenceScore: v.number(),
         description: v.string(),
+        citedPolicy: v.optional(v.string()), // <--- ADDED
     }),
   },
   handler: async (ctx, args) => {

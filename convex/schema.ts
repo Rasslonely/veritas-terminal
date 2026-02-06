@@ -37,6 +37,7 @@ export default defineSchema({
       damageLevel: v.string(), // "NONE", "MINOR", "MODERATE", "SEVERE", "TOTAL_LOSS"
       confidenceScore: v.number(),
       description: v.string(),
+      citedPolicy: v.optional(v.string()), // <--- ADDED
     }),
     
     // Claim Status
@@ -172,6 +173,6 @@ export default defineSchema({
     // Vector Index for Semantic Search
     .vectorIndex("by_embedding", {
       vectorField: "embedding",
-      dimensions: 768,
+      dimensions: 3072, // Updated to match text-embedding-004
     }),
 });
