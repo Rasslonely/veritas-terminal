@@ -43,7 +43,7 @@ export class BaseAdapter implements IBlockchainAdapter {
     try {
         const hash = await this.walletClient.sendTransaction({
             to: this.account.address,
-            value: 0n,
+            value: BigInt(0),
             data: `0x${Buffer.from(evidence).toString('hex')}` as `0x${string}`
         });
 

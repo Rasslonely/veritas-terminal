@@ -33,9 +33,11 @@ export const ingestPolicy = action({
     console.log(`Generated ${chunks.length} chunks.`);
 
     // 3. Embed & Store Chunks
+    // 3. Embed & Store Chunks
     const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
 
-    for (const [i, chunk] of chunks.entries()) {
+    for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
         const result = await model.embedContent(chunk);
         const embedding = result.embedding.values;
 

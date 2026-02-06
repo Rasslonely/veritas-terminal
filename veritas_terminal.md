@@ -59,8 +59,9 @@ One Codebase. Two Winning Narratives. The key is a **Polymorphic Backend** contr
 | **Animation** | Framer Motion (God Mode) | Fluid micro-interactions, Radar Scans, Matrix Effects |
 | **Physics** | React Lenis | Kinetic momentum scrolling (World Class feel) |
 | **Adaptive UI** | Mobile (Field View) / Desktop (Command Deck) | Device-specific interfaces (PWA vs SOC) |
-| **Backend** | **Convex** | Realtime database + serverless functions |
-| **AI Core** | Google Gemini 2.5 Flash | Multi-modal analysis (image + text) |
+| **Frontend** | Vercel | Next.js Hosting |
+| **Backend** | Convex (Outgoing Toucan) | `https://outgoing-toucan-455.convex.cloud` |
+| **Blockchain** | Base Sepolia | L2 Settlement |
 | **AI Orchestration** | Convex Actions | Long-running AI calls (no timeout) |
 
 ### 🛠️ Available Gemini Models (Google AI Studio)
