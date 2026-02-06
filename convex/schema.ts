@@ -151,4 +151,27 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_pool", ["poolId"]),
+
+  // ============================================
+  // RAG ENGINE (The Brain)
+  // ============================================
+  policies: defineTable({
+    title: v.string(),          // "Veritas Gadget Protection v1"
+    version: v.string(),        // "1.0"
+    isActive: v.boolean(),
+    createdAt: v.number(),
+  }),
+
+  policyChunks: defineTable({
+    policyId: v.id("policies"),
+    content: v.string(),        // The text clause
+    embedding: v.array(v.number()), // Vector embedding (768 dims for Gemini)
+    chunkIndex: v.number(),
+  })
+    .index("by_policy", ["policyId"])
+    // Vector Index for Semantic Search
+    .vectorIndex("by_embedding", {
+      vectorField: "embedding",
+      dimensions: 768,
+    }),
 });

@@ -35,17 +35,37 @@ export const analyzeEvidence = action({
         generationConfig: { responseMimeType: "application/json" } 
     });
 
-    // 4. Prompt Engineering
+    // 3.5. RAG RETRIEVAL (The "Brain")
+    let policyContext = "";
+    try {
+        // We query for broad damage categories to get relevant exclusions
+        policyContext = await ctx.runAction(api.actions.rag.retrieveContext, { 
+            query: "screen crack water damage cosmetic scratches intentional damage" 
+        });
+    } catch (e) {
+        console.warn("RAG Retrieval Skipped:", e);
+    }
+
+    // 4. Prompt Engineering (RAG Enhanced)
     const prompt = `
       You are VERITAS, an elite AI insurance adjuster.
+      
+      === INSURANCE POLICY RULES (STRICT) ===
+      ${policyContext || "No specific policy linked. Use standard device insurance principles."}
+      =======================================
+
       Analyze this image for physical damage.
+      Rules:
+      1. If damage matches an EXCLUSION in the policy, mention it.
+      2. If damage is COSMETIC but policy covers standard wear, note it.
       
       Output strictly in JSON format matching this schema:
       {
         "objectDetected": "string",
         "damageLevel": "NONE" | "MINOR" | "MODERATE" | "SEVERE" | "TOTAL_LOSS",
         "confidenceScore": number (0-100),
-        "description": "string"
+        "description": "string",
+        "citedPolicy": "string (Quote the specific Policy Clause if relevant, e.g. 'Clause 4.2 excludes water damage')"
       }
     `;
 

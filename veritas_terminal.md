@@ -60,8 +60,14 @@ One Codebase. Two Winning Narratives. The key is a **Polymorphic Backend** contr
 | **Physics** | React Lenis | Kinetic momentum scrolling (World Class feel) |
 | **Adaptive UI** | Mobile (Field View) / Desktop (Command Deck) | Device-specific interfaces (PWA vs SOC) |
 | **Backend** | **Convex** | Realtime database + serverless functions |
-| **AI Core** | Google Gemini Pro Vision | Multi-modal analysis (image + text) |
+| **AI Core** | Google Gemini 2.5 Flash | Multi-modal analysis (image + text) |
 | **AI Orchestration** | Convex Actions | Long-running AI calls (no timeout) |
+
+### 🛠️ Available Gemini Models (Google AI Studio)
+*   **Text/Vision**: `Gemini 2.5 Flash` (Use ID: `gemini-2.5-flash`)
+*   **Text Only**: `Gemini 2.5 Flash Lite`
+*   **Embedding**: `Gemini Embedding 1` (Use ID: `text-embedding-004`)
+*   *Note: Only these models are whitelisted for this project environment.*
 | **Blockchain (Hedera)** | `@hashgraph/sdk` | HCS logging, HTS tokenization |
 | **Blockchain (EVM)** | `viem` + `wagmi` | Base L2 settlement |
 | **Wallet Connect** | RainbowKit | Multi-chain wallet UX |
@@ -500,7 +506,7 @@ export const analyzeEvidence = action({
     mimeType: v.string(),
   },
   handler: async (ctx, args) => {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-vision" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     
     const prompt = `You are VERITAS, an AI evidence analyzer for insurance claims.
     
@@ -540,7 +546,7 @@ export const runAgentDebate = action({
     chainMode: v.union(v.literal("HEDERA"), v.literal("BASE")),
   },
   handler: async (ctx, args) => {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const { getAdapter } = await import("./blockchain/adapter");
     const adapter = getAdapter(args.chainMode);
     

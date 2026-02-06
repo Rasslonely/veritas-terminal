@@ -74,6 +74,18 @@ export function AnalysisResult({ analysis, isLoading }: AnalysisResultProps) {
                     {analysis.description}
                 </p>
             </div>
+
+            {/* RAG Policy Citation */}
+            {analysis.citedPolicy && (
+                <div className="space-y-1 pt-2 border-t border-white/10">
+                    <label className="flex items-center gap-2 text-[10px] uppercase text-emerald-500 tracking-widest font-bold">
+                        <CheckCircle className="w-3 h-3" /> Policy Verification
+                    </label>
+                    <p className="text-xs text-emerald-400/90 font-mono bg-emerald-950/30 p-3 rounded border border-emerald-500/20 italic">
+                        "{analysis.citedPolicy}"
+                    </p>
+                </div>
+            )}
         </CardContent>
     </Card>
   );
