@@ -4,21 +4,15 @@ import { v } from "convex/values";
 export const getPublicFeed = query({
   args: {},
   handler: async (ctx) => {
-    // 1. Fetch recent resolved claims
+    // 1. Fetch recent claims of all interesting statuses
     const claims = await ctx.db
       .query("claims")
-      .withIndex("by_status", (q) => q.eq("status", "APPROVED"))
+      .withIndex("by_created")
       .order("desc")
-      .take(20);
+      .take(50);
 
-    const rejected = await ctx.db
-        .query("claims")
-        .withIndex("by_status", (q) => q.eq("status", "REJECTED"))
-        .order("desc")
-        .take(10);
-    
-    // Combine and sort (memory sort for now, fine for demo)
-    const all = [...claims, ...rejected].sort((a, b) => b.createdAt - a.createdAt);
+    // Filter out boring ones (PENDING_ANALYSIS)
+    const all = claims.filter(c => c.status !== "PENDING_ANALYSIS");
 
     // 2. Enhance with user info (basic join)
     const feedItems = await Promise.all(all.map(async (claim) => {
