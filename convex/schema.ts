@@ -58,6 +58,20 @@ export default defineSchema({
     livenessStatus: v.optional(v.string()), // "PENDING", "CHALLENGED", "VERIFIED", "FAILED"
     livenessChallenge: v.optional(v.string()), // "Place finger on crack"
     livenessImageId: v.optional(v.string()),   // Storage ID of verification image
+
+    // ============================================
+    // VOIGHT-KAMPFF PROTOCOL (Voice Truth)
+    // ============================================
+    voiceEvidence: v.optional(v.object({
+      audioUrl: v.string(),       // URL to stored audio
+      storageId: v.string(),      // Storage ID
+      transcript: v.optional(v.string()), // Transcribed text
+    })),
+    voiceAnalysis: v.optional(v.object({
+      consistencyScore: v.number(), // 0-100
+      analysis: v.string(),         // "User hesitated..."
+      isReal: v.boolean(),
+    })),
     
     // Timestamps
     createdAt: v.number(),

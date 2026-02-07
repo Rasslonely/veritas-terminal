@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as actions_analyzeVoice from "../actions/analyzeVoice.js";
 import type * as actions_debate from "../actions/debate.js";
 import type * as actions_debateInternal from "../actions/debateInternal.js";
 import type * as actions_gemini from "../actions/gemini.js";
@@ -35,6 +36,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "actions/analyzeVoice": typeof actions_analyzeVoice;
   "actions/debate": typeof actions_debate;
   "actions/debateInternal": typeof actions_debateInternal;
   "actions/gemini": typeof actions_gemini;

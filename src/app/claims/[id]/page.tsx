@@ -8,6 +8,8 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DebateThread } from "@/components/debate/DebateThread";
 import { AnalysisResult } from "@/components/claim/AnalysisResult";
 import { MatrixLog } from "@/components/debate/MatrixLog";
+import { InterrogationModal } from "@/components/claims/InterrogationModal"; // <--- NEW
+
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -20,8 +22,12 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
   // Fetch Claim
   const claim = useQuery(api.claims.getClaim, { claimId });
   // Action to start debate
+  // Action to start debate
   const runDebate = useAction(api.actions.debate.runAgentDebate);
   
+  // Verify Testimony Action
+  const verifyTestimony = useAction(api.actions.analyzeVoice.verifyTestimony);
+
   const [isDebating, setIsDebating] = useState(false);
   const [activeTab, setActiveTab] = useState("debate");
 
@@ -74,6 +80,50 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
     } finally {
         setIsSettling(false);
     }
+  };
+
+  // --- INTERROGATION LOGIC ---
+  const [showInterrogation, setShowInterrogation] = useState(false);
+
+  useEffect(() => {
+    if (claim?.status === "INTERROGATION_PENDING") {
+        setShowInterrogation(true);
+        // Play alert sound?
+    } else {
+        setShowInterrogation(false);
+    }
+  }, [claim?.status]);
+
+  const handleVoiceSubmission = async (audioBlob: Blob) => {
+      if (!claim) return;
+      
+      // Convert Blob to Base64
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+          const base64Audio = reader.result?.toString().split(",")[1]; // Remove data:audio/mp3;base64,
+          if (!base64Audio) return;
+
+          try {
+             const result = await verifyTestimony({
+                 claimId,
+                 evidenceImageUrl: claim.evidenceImageUrl,
+                 audioBase64: base64Audio
+             });
+             
+             if (result.isReal) {
+                 alert("TESTIMONY VERIFIED. Debate Resuming...");
+                 // Auto-resume? Or let user click resume
+                 // Status is updated to DEBATE_IN_PROGRESS by the action
+             } else {
+                 alert(`TESTIMONY REJECTED: ${result.analysis}`);
+             }
+             setShowInterrogation(false);
+          } catch (e) {
+              console.error("Voice Verification Failed", e);
+              alert("Transmission failed.");
+          }
+      };
   };
 
   if (!claim) {
@@ -166,6 +216,14 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
                 )}
             </TabsContent>
         </Tabs>
+
+        {/* INTERROGATION OVERLAY */}
+         <InterrogationModal 
+            isOpen={showInterrogation}
+            onClose={() => { /* Prevent closing without submission? Or allow cancel? */ }} 
+            onSubmitAudio={handleVoiceSubmission}
+            challengeText="System Alert: The Auditor has flagged inconsistencies in your claim. Verbal clarification is required to proceed. Please explain the incident in detail."
+        />
       </div>
     </DashboardLayout>
   );

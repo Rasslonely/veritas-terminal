@@ -82,6 +82,26 @@ export const runAgentDebate = action({
     const auditorText = auditorRes.response.text();
     await logMessage("AUDITOR", "Agent B (Auditor)", auditorText, 2);
 
+    // --- INTERROGATION PROTOCOL CHECK ---
+    // If Auditor suspects fraud, we halt for Voice Verification (Voight-Kampff)
+    const suspicionCheck = await model.generateContent(`
+        Analyze this Auditor statement: "${auditorText}"
+        Does the auditor suspect fraud, inconsistency, or lack of proof?
+        Output strictly "YES" or "NO".
+    `);
+    const isSuspicious = suspicionCheck.response.text().includes("YES");
+
+    if (isSuspicious) {
+        // TRIGGER INTERROGATION
+        await ctx.runMutation(internal.debateInternal.updateClaimStatus, {
+            claimId,
+            status: "INTERROGATION_PENDING"
+        });
+        
+        await logMessage("SYSTEM", "VERITAS CORE", "⚠️ DISCREPANCY DETECTED. INTERROGATION PROTOCOL INITIATED. AWAITING USER TESTIMONY.", 2.5);
+        return; // Halt debate here
+    }
+
     // --- ROUND 3: THE VERDICT (JUDGE) ---
     // Decides the outcome
     const judgePrompt = `

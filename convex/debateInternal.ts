@@ -28,3 +28,25 @@ export const updateClaimStatus = internalMutation({
         await ctx.db.patch(args.claimId, { status: args.status });
     }
 });
+
+export const updateClaimVoiceEvidence = internalMutation({
+    args: {
+        claimId: v.id("claims"),
+        voiceAnalysis: v.object({
+            consistencyScore: v.number(),
+            analysis: v.string(),
+            isReal: v.boolean(),
+        }),
+        voiceEvidence: v.object({
+            audioUrl: v.string(),
+            storageId: v.string(),
+            transcript: v.optional(v.string())
+        })
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.claimId, {
+            voiceAnalysis: args.voiceAnalysis,
+            voiceEvidence: args.voiceEvidence
+        });
+    }
+});
