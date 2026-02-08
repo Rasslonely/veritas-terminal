@@ -11,6 +11,7 @@ export const createClaim = mutation({
         confidenceScore: v.number(),
         description: v.string(),
         citedPolicy: v.optional(v.string()), // <--- ADDED
+        hcsLogId: v.optional(v.string()),    // <--- HCS Sequence Number
     }),
   },
   handler: async (ctx, args) => {

@@ -86,6 +86,19 @@ export function AnalysisResult({ analysis, isLoading }: AnalysisResultProps) {
                     </p>
                 </div>
             )}
+
+            {/* HCS Proof (The Black Box Verified) */}
+            {analysis.hcsLogId && (
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-mono tracking-widest uppercase">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+                        HCS VERIFIED PROOF
+                    </div>
+                    <code className="text-[10px] text-blue-400 font-mono bg-blue-950/30 px-2 py-1 rounded border border-blue-500/20">
+                        SEQ: #{analysis.hcsLogId}
+                    </code>
+                </div>
+            )}
         </CardContent>
     </Card>
   );

@@ -87,7 +87,28 @@ export const analyzeEvidence = action({
     try {
         const cleanedText = text.replace(/```json\n?|```/g, "").trim(); // Strip Markdown
         const json = JSON.parse(cleanedText);
-        const validated = EvidenceAnalysisSchema.parse(json);
+        
+        // 7. HCS BLACK BOX LOGGING
+        let hcsLogId: string | undefined;
+        try {
+            const { getAdapter } = await import("../blockchain/adapter");
+            const adapter = await getAdapter("HEDERA");
+            
+            hcsLogId = await adapter.logEvidence(JSON.stringify({
+                app: "VERITAS_CORE",
+                type: "IMAGE_ANALYSIS",
+                input_hash: "hash_of_image_blob", // In prod, hash it
+                analysis: json,
+            }));
+            console.log("✅ HCS Image Log:", hcsLogId);
+        } catch (e) {
+             console.warn("⚠️ HCS Logging Skipped:", e);
+        }
+
+        // Inject HCS ID into the result
+        const finalResult = { ...json, hcsLogId };
+
+        const validated = EvidenceAnalysisSchema.parse(finalResult);
         return validated;
     } catch (e) {
         console.error("AI Error:", text);

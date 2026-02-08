@@ -38,6 +38,7 @@ export default defineSchema({
       confidenceScore: v.number(),
       description: v.string(),
       citedPolicy: v.optional(v.string()), // <--- ADDED
+      hcsLogId: v.optional(v.string()),    // <--- HCS Sequence Number (Proof)
     }),
     
     // Claim Status
@@ -71,6 +72,7 @@ export default defineSchema({
       consistencyScore: v.number(), // 0-100
       analysis: v.string(),         // "User hesitated..."
       isReal: v.boolean(),
+      hcsLogId: v.optional(v.string()), // <--- HCS Sequence Number (Proof)
     })),
     
     // Timestamps

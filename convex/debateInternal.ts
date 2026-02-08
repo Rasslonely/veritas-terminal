@@ -36,6 +36,7 @@ export const updateClaimVoiceEvidence = internalMutation({
             consistencyScore: v.number(),
             analysis: v.string(),
             isReal: v.boolean(),
+            hcsLogId: v.optional(v.string()) // <--- ADDED
         }),
         voiceEvidence: v.object({
             audioUrl: v.string(),

@@ -71,7 +71,27 @@ export const verifyTestimony = action({
     const cleanJson = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
     const analysis = JSON.parse(cleanJson);
 
-    // 2. SAVE TO DB
+    // 2. LOG TO HEDERA CONSENSUS SERVICE (The Black Box)
+    let hcsLogId: string | undefined;
+    try {
+        const { getAdapter } = await import("../blockchain/adapter");
+        const adapter = await getAdapter("HEDERA");
+        
+        // Log the "Thought Process"
+        hcsLogId = await adapter.logEvidence(JSON.stringify({
+            app: "VERITAS_VOIGHT_KAMPFF",
+            claimId: args.claimId,
+            type: "VOICE_ANALYSIS",
+            input_hash: "hash_of_audio_blob", // In prod, hash the actual blob
+            analysis: analysis,
+            verdict: analysis.isReal ? "VERIFIED" : "DECEPTIVE"
+        }));
+        console.log("✅ HCS Voice Log:", hcsLogId);
+    } catch (e) {
+        console.warn("⚠️ HCS Logging Skipped (Demo/Config Alert):", e);
+    }
+
+    // 3. SAVE TO DB
     // We need to store the analysis, the audio URL (mocked here or passed), and update status
     // Import internal mutation to update claim
     const { internal } = await import("../_generated/api");
@@ -82,7 +102,8 @@ export const verifyTestimony = action({
         voiceAnalysis: {
             consistencyScore: analysis.consistencyScore,
             analysis: analysis.analysis,
-            isReal: analysis.isReal
+            isReal: analysis.isReal,
+            hcsLogId: hcsLogId // <--- PROOF OF VERIFICATION
         },
         // In a real app, we'd upload the audioBlob to storage and get the ID/URL
         // For now, we assume the client might upload receiving a URL, or we just store the transcript.
@@ -99,14 +120,15 @@ export const verifyTestimony = action({
         }
     });
 
-    // 3. LOG TO DEBATE STREAM
+    // 4. LOG TO DEBATE STREAM
     await ctx.runMutation(internal.debateInternal.insertMessage, {
         claimId: args.claimId,
         agentRole: "SYSTEM",
         agentName: "Voight-Kampff Protocol",
-        content: `VOICE TESTIMONY RECEIVED.\nTranscript: "${analysis.transcript}"\nAnalysis: ${analysis.analysis}\nConsistency Score: ${analysis.consistencyScore}/100`,
+        content: `VOICE TESTIMONY RECEIVED.\nTranscript: "${analysis.transcript}"\nAnalysis: ${analysis.analysis}\nConsistency Score: ${analysis.consistencyScore}/100\nHEDERA PROOF: ${hcsLogId || "Pending"}`,
         round: 2.5, // Intermission round
-        isOnChain: false,
+        isOnChain: !!hcsLogId,
+        txHash: hcsLogId
     });
 
     // 4. UPDATE CLAIM STATUS

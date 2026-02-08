@@ -6,6 +6,7 @@ export const EvidenceAnalysisSchema = z.object({
   confidenceScore: z.number().min(0).max(100).describe("Confidence score between 0 and 100"),
   description: z.string().describe("A concise but detailed description of the visible damage"),
   citedPolicy: z.string().optional().describe("Relevant policy clause IF referencing specific rules"),
+  hcsLogId: z.string().optional().describe("Hedera Consensus Service Sequence Number"),
 });
 
 export type EvidenceAnalysis = z.infer<typeof EvidenceAnalysisSchema>;
