@@ -15,6 +15,7 @@ export const createClaim = mutation({
     }),
     stakeTxHash: v.optional(v.string()), // <--- TRUTH BOND
     stakeAmount: v.optional(v.number()),
+    policyId: v.optional(v.id("microPolicies")), // <--- FLASH POLICY
   },
   handler: async (ctx, args) => {
     // In a real app we'd get the authenticated user. 
@@ -47,6 +48,9 @@ export const createClaim = mutation({
         stakeAmount: args.stakeAmount,
         stakeCurrency: "USDC",
         stakeStatus: args.stakeTxHash ? "LOCKED" : undefined,
+
+        // FLASH POLICY
+        policyId: args.policyId,
     });
 
     return claimId;

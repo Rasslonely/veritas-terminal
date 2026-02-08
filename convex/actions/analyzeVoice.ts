@@ -5,7 +5,7 @@ import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-import { api } from "../_generated/api";
+import { api, internal } from "../_generated/api";
 
 export const verifyTestimony = action({
   args: {

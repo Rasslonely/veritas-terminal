@@ -133,4 +133,13 @@ export class BaseAdapter implements IBlockchainAdapter {
           throw e;
       }
   }
+  async mintPolicyNFT(userAddress: string, metadata: string): Promise<string> {
+      console.log("Mock Mint Policy NFT on Base");
+      return "0xMOCK_NFT_MINT_HASH";
+  }
+
+  async burnPolicyNFT(tokenId: string, serialNumber: number): Promise<string> {
+      console.log("Mock Burn Policy NFT on Base");
+      return "0xMOCK_NFT_BURN_HASH";
+  }
 }

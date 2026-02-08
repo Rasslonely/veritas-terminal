@@ -23,6 +23,7 @@ import type * as debug_gemini from "../debug_gemini.js";
 import type * as feed from "../feed.js";
 import type * as files from "../files.js";
 import type * as policies from "../policies.js";
+import type * as policyInternal from "../policyInternal.js";
 import type * as rag from "../rag.js";
 import type * as seed from "../seed.js";
 import type * as seed_rag from "../seed_rag.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   feed: typeof feed;
   files: typeof files;
   policies: typeof policies;
+  policyInternal: typeof policyInternal;
   rag: typeof rag;
   seed: typeof seed;
   seed_rag: typeof seed_rag;

@@ -138,7 +138,8 @@ export default function ScanPage() {
 
   const [isCreating, setIsCreating] = useState(false);
 
-  const stakeTruthBond = useAction(api.actions.blockchain.stakeTruthBond);
+  const stakeTruthBond = useAction(api.actions.gemini.stakeTruthBond);
+  const mintPolicy = useAction(api.actions.gemini.mintPolicy);
   const [isStaking, setIsStaking] = useState(false);
 
   const handleCreateClaim = async () => {
@@ -228,6 +229,40 @@ export default function ScanPage() {
                 <div className="w-full space-y-4">
                     <AnalysisResult analysis={analysis} isLoading={false} />
                     
+                    <div className="bg-muted/30 p-3 rounded-md border border-white/10 space-y-2">
+                        <div className="flex items-center justify-between">
+                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Flash Policy</span>
+                             <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">NFT</span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between gap-2">
+                             <div className="text-sm font-semibold truncate">
+                                 {/* Mock logic: If we have a policy, show it. Else show specific "Mint" option */}
+                                 {"MacBook Pro Coverage (24h)"}
+                             </div>
+                             <Button 
+                                size="sm" 
+                                variant="secondary" 
+                                className="h-7 text-xs"
+                                onClick={async () => {
+                                    impact.medium();
+                                    // Mock Mint
+                                    await mintPolicy({
+                                        assetType: analysis.objectDetected,
+                                        assetDescription: analysis.description,
+                                        coverageAmount: 2000,
+                                        durationHours: 24,
+                                        userAddress: "0xUserWallet..."
+                                    });
+                                    notification.success();
+                                    alert("Policy NFT Minted! #0.0.12345");
+                                }}
+                             >
+                                Mint + Link
+                             </Button>
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-3">
                         <Button onClick={() => { setCapturedImage(null); setAnalysis(null); }} variant="outline" className="w-full">
                             Discard

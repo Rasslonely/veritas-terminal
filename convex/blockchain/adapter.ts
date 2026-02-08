@@ -38,7 +38,29 @@ export interface IBlockchainAdapter {
    * @param amount Amount to return.
    * @returns Transaction hash.
    */
+  /**
+   * Returns a stake to the user after verification.
+   * @param userAddress The user who told the truth.
+   * @param amount Amount to return.
+   * @returns Transaction hash.
+   */
   returnStake(userAddress: string, amount: number): Promise<string>;
+
+  /**
+   * Mints a Flash Policy NFT on Hedera (HTS).
+   * @param userAddress The user receiving the policy.
+   * @param metadata JSON metadata for the policy.
+   * @returns Token ID (and Serial Number).
+   */
+  mintPolicyNFT(userAddress: string, metadata: string): Promise<string>;
+
+  /**
+   * Burns a Policy NFT upon claim payout.
+   * @param tokenId The HTS Token ID.
+   * @param serialNumber The serial number (if NFT) or amount.
+   * @returns Transaction hash.
+   */
+  burnPolicyNFT(tokenId: string, serialNumber: number): Promise<string>;
 }
 
 export async function getAdapter(mode: "HEDERA" | "BASE"): Promise<IBlockchainAdapter> {

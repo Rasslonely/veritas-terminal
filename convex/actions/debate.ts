@@ -1,7 +1,7 @@
 "use node";
 
 import { action } from "../_generated/server";
-import { internal } from "../_generated/api";
+import { internal, api } from "../_generated/api";
 import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -153,6 +153,27 @@ export const settleClaim = action({
            claimId,
            status: "SETTLED"
        });
+
+       // BURN FLASH POLICY NFT (RWA Lifecycle)
+       // We fetch the claim to check for a linked policy
+       // Using 'any' cast for 'api' because we know getClaim exists but valid types might be lagging
+       const claim = await ctx.runQuery(api.claims.getClaim, { claimId });
+       
+       if (claim && claim.policyId) {
+           console.log(`🔥 Burning Flash Policy NFT for Claim ${claimId}`);
+           try {
+               // We use the 'api' object imported from _generated/api
+               // If type checking fails on 'actions', we might need to fix imports or just cast
+               // @ts-ignore
+               await ctx.runAction(api.actions.policy.burnPolicy, { 
+                   policyId: claim.policyId,
+                   reason: "CLAIM_PAYOUT_COMPLETE"
+               });
+           } catch (e) {
+               console.error("Failed to burn policy NFT (Non-blocking):", e);
+           }
+       }
+
     } else {
         throw new Error(`Blockchain payout failed on ${chainMode}. Check server logs for gas/balance issues.`);
     }

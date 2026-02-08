@@ -41,6 +41,9 @@ export default defineSchema({
       hcsLogId: v.optional(v.string()),    // <--- HCS Sequence Number (Proof)
     }),
     
+    // Policy Link (The NFT)
+    policyId: v.optional(v.id("microPolicies")), // <--- LINK TO ASSET
+    
     // Claim Status
     status: v.string(), // PENDING_ANALYSIS, DEBATE_IN_PROGRESS, APPROVED, REJECTED, SETTLED
     
@@ -137,6 +140,10 @@ export default defineSchema({
     createdAt: v.number(),
     tokenId: v.optional(v.string()),
     mintTxHash: v.optional(v.string()),
+    
+    // Burning
+    burnTxHash: v.optional(v.string()),
+    burnedAt: v.optional(v.number()),
   })
     .index("by_user", ["userId"]),
     

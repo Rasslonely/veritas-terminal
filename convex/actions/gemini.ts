@@ -195,3 +195,109 @@ export const verifyLiveness = action({
       return { success: isVerified, analysis };
   }
 });
+
+import { internal } from "../_generated/api";
+
+// === FLASH POLICY & TRUTH BOND ACTIONS (Inlined for Stability) ===
+
+export const mintPolicy = action({
+  args: {
+    assetType: v.string(), // "Phone", "Laptop"
+    assetDescription: v.string(), // "MacBook Pro M3"
+    coverageAmount: v.number(), // 2000
+    durationHours: v.number(), // 24
+    userAddress: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // 1. Calculate Premium (Mock Calculation)
+    const premium = (args.coverageAmount * 0.001) * args.durationHours; 
+
+    // 2. Mint NFT on Blockchain
+    const { getAdapter } = await import("../blockchain/adapter");
+    const adapter = await getAdapter("HEDERA");
+
+    const metadata = JSON.stringify({
+        name: `Veritas Flash Policy: ${args.assetType}`,
+        description: args.assetDescription,
+        coverage: args.coverageAmount,
+        expiry: Date.now() + (args.durationHours * 3600000)
+    });
+
+    const tokenId = await adapter.mintPolicyNFT(args.userAddress, metadata);
+
+    // 3. Store in DB
+    await ctx.runMutation(internal.policies.createPolicyRecord, {
+        assetType: args.assetType,
+        assetDescription: args.assetDescription,
+        coverageAmount: args.coverageAmount,
+        premiumPaid: premium,
+        durationHours: args.durationHours,
+        tokenId: tokenId,
+        userAddress: args.userAddress
+    });
+
+    return { tokenId, premium };
+  },
+});
+
+export const burnPolicy = action({
+    args: {
+        policyId: v.id("microPolicies"),
+        reason: v.string()
+    },
+    handler: async (ctx, args) => {
+        // 1. Get Policy
+        const policy = await ctx.runQuery(api.policies.getPolicy, { policyId: args.policyId });
+        if (!policy || !policy.tokenId) throw new Error("Policy not found or invalid");
+
+        // 2. Burn on Chain
+        const { getAdapter } = await import("../blockchain/adapter");
+        const adapter = await getAdapter("HEDERA");
+
+        const burnTx = await adapter.burnPolicyNFT(policy.tokenId, 1);
+
+        // 3. Mark as Burned in DB
+        await ctx.runMutation(internal.policies.updatePolicyStatus, {
+            policyId: args.policyId,
+            status: "BURNED",
+            burnTxHash: burnTx
+        });
+
+        return burnTx;
+    }
+});
+
+export const stakeTruthBond = action({
+  args: {
+    amount: v.number(),
+    chain: v.string(), // "BASE" | "HEDERA"
+    userAddress: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { getAdapter } = await import("../blockchain/adapter");
+    const adapter = await getAdapter(args.chain as "BASE" | "HEDERA");
+    
+    console.log(`🔒 Initiating Truth Bond Stake: ${args.amount} ${args.chain} for ${args.userAddress}`);
+    
+    const txHash = await adapter.stake(args.amount, args.userAddress);
+    
+    return txHash;
+  },
+});
+
+export const slashTruthBond = action({
+    args: {
+        amount: v.number(),
+        chain: v.string(),
+        userAddress: v.string(),
+        reason: v.string(),
+    },
+    handler: async (ctx, args) => {
+        const { getAdapter } = await import("../blockchain/adapter");
+        const adapter = await getAdapter(args.chain as "BASE" | "HEDERA");
+        
+        console.log(`🔪 SLASHING Truth Bond: ${args.userAddress}`);
+        const txHash = await adapter.slashStake(args.userAddress, args.amount);
+        return txHash;
+    }
+});

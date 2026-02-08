@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
 // Mock pricing
@@ -73,5 +73,65 @@ export const getMyPolicies = query({
             .withIndex("by_user", (q) => q.eq("userId", userId!))
             .order("desc")
             .collect();
+    }
+});
+
+export const getPolicy = query({
+    args: { policyId: v.id("microPolicies") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.policyId);
+    }
+});
+
+// INTERNAL MUTATIONS (Formerly in policyInternal.ts)
+export const createPolicyRecord = internalMutation({
+  args: {
+    assetType: v.string(),
+    assetDescription: v.string(),
+    coverageAmount: v.number(),
+    premiumPaid: v.number(),
+    durationHours: v.number(),
+    tokenId: v.string(),
+    userAddress: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_wallet", (q) => q.eq("walletAddress", args.userAddress))
+      .first();
+
+    if (!user) throw new Error("User not found");
+
+    const now = Date.now();
+    await ctx.db.insert("microPolicies", {
+      userId: user._id,
+      assetType: args.assetType,
+      assetDescription: args.assetDescription,
+      coverageAmount: args.coverageAmount,
+      premiumPaid: args.premiumPaid,
+      currency: "USDC",
+      startTime: now,
+      endTime: now + (args.durationHours * 3600000),
+      durationHours: args.durationHours,
+      status: "ACTIVE",
+      createdAt: now,
+      tokenId: args.tokenId,
+      mintTxHash: args.tokenId, 
+    });
+  },
+});
+
+export const updatePolicyStatus = internalMutation({
+    args: {
+        policyId: v.id("microPolicies"),
+        status: v.string(),
+        burnTxHash: v.optional(v.string())
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.policyId, {
+            status: args.status,
+            burnTxHash: args.burnTxHash,
+            burnedAt: args.status === "BURNED" ? Date.now() : undefined
+        });
     }
 });

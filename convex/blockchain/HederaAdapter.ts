@@ -137,4 +137,21 @@ export class HederaAdapter implements IBlockchainAdapter {
           timestamp: Date.now()
       }));
   }
+  async mintPolicyNFT(userAddress: string, metadata: string): Promise<string> {
+      return this.logEvidence(JSON.stringify({
+          type: "POLICY_MINTED",
+          user: userAddress,
+          metadata: JSON.parse(metadata),
+          timestamp: Date.now()
+      }));
+  }
+
+  async burnPolicyNFT(tokenId: string, serialNumber: number): Promise<string> {
+      return this.logEvidence(JSON.stringify({
+          type: "POLICY_BURNED",
+          tokenId: tokenId,
+          serial: serialNumber,
+          timestamp: Date.now()
+      }));
+  }
 }
