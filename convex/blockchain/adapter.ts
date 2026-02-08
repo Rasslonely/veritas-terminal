@@ -15,6 +15,30 @@ export interface IBlockchainAdapter {
    * @returns True if successful.
    */
   payoutClaim(amount: number, recipient: string): Promise<boolean>;
+
+  /**
+   * Verified user stake (The Truth Bond).
+   * @param amount Amount to stake.
+   * @param userAddress The user's wallet.
+   * @returns Transaction hash.
+   */
+  stake(amount: number, userAddress: string): Promise<string>;
+
+  /**
+   * Slashes a user's stake due to fraud.
+   * @param userAddress The user who lied.
+   * @param amount Amount to slash.
+   * @returns Transaction hash.
+   */
+  slashStake(userAddress: string, amount: number): Promise<string>;
+
+  /**
+   * Returns a stake to the user after verification.
+   * @param userAddress The user who told the truth.
+   * @param amount Amount to return.
+   * @returns Transaction hash.
+   */
+  returnStake(userAddress: string, amount: number): Promise<string>;
 }
 
 export async function getAdapter(mode: "HEDERA" | "BASE"): Promise<IBlockchainAdapter> {

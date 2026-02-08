@@ -13,19 +13,12 @@ export const createClaim = mutation({
         citedPolicy: v.optional(v.string()), // <--- ADDED
         hcsLogId: v.optional(v.string()),    // <--- HCS Sequence Number
     }),
+    stakeTxHash: v.optional(v.string()), // <--- TRUTH BOND
+    stakeAmount: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     // In a real app we'd get the authenticated user. 
     // For this demo, we might pick the first user or require auth.
-    // Let's assume the auth middleware is separate, but we'll try to find a user 
-    // or create a guest user if needed. 
-    // Ideally, we use ctx.auth.getUserIdentity() but we set up a custom auth flow.
-    // For PWA demo speed, we'll look up the most recent user or just hardcode if needed
-    // But better: we passed `userId` in args? No, let's just use a placeholder if no auth
-    // or rely on a "current user" query.
-    
-    // For now, let's just find the first user in the DB to attach to, 
-    // or create a "Guest" claim if no users exist.
     const user = await ctx.db.query("users").first();
     let userId = user?._id;
 
@@ -40,18 +33,20 @@ export const createClaim = mutation({
 
     const claimId = await ctx.db.insert("claims", {
         userId,
-        evidenceImageUrl: args.evidenceImageUrl, // We might want to resolve storageId to URL or keep ID? 
-        // Schema says evidenceImageUrl is string. We can store the storageId or the public URL.
-        // Let's store the URL for now, but also keeping storageId in metadata might be good.
-        // Actually, let's use the provided URL.
-        
+        evidenceImageUrl: args.evidenceImageUrl,
         evidenceMetadata: {
             timestamp: Date.now(),
             deviceInfo: "Veritas Terminal PWA", // Mock
         },
         initialAnalysis: args.analysis,
         status: "DEBATE_IN_PROGRESS",
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        
+        // TRUTH BOND
+        stakeTxHash: args.stakeTxHash,
+        stakeAmount: args.stakeAmount,
+        stakeCurrency: "USDC",
+        stakeStatus: args.stakeTxHash ? "LOCKED" : undefined,
     });
 
     return claimId;

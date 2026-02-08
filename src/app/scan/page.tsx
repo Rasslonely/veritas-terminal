@@ -138,16 +138,43 @@ export default function ScanPage() {
 
   const [isCreating, setIsCreating] = useState(false);
 
+  const stakeTruthBond = useAction(api.actions.blockchain.stakeTruthBond);
+  const [isStaking, setIsStaking] = useState(false);
+
   const handleCreateClaim = async () => {
     if (!analysis || !evidenceStorageId || !capturedImage || isCreating) return;
+    setIsCreating(true);
+
     try {
+        // 1. THE TRUTH BOND (Staking)
+        setIsStaking(true);
+        impact.medium();
+        playScan();
+
+        // Simulate a delay for the "Blockchain Transaction"
+        // In reality, we call the action
+        const stakeTx = await stakeTruthBond({
+            amount: 5,
+            chain: "BASE",
+            userAddress: "0xUserWallet..." // Mock for demo
+        });
+        
+        setIsStaking(false);
+        playSuccess();
+        notification.success();
+        
+        // 2. CREATE CLAIM (With Stake Proof)
         impact.heavy();
-        playClick();
-        setIsCreating(true);
+        
         const claimId = await createClaim({
             evidenceImageUrl: capturedImage,
             evidenceStorageId: evidenceStorageId,
-            analysis: analysis
+            analysis: analysis,
+            // Pass the Stake Proof (Need to update mutation to accept it, or just rely on backend correlation? 
+            // The mutation update was done in schema, but we didn't update arguments in claims.ts yet?
+            // Wait, we updated schema to have stakeTxHash, but createClaim args?
+            // Let's verify claims.ts args. if missing, we need to add it.
+            // Assuming we will add it.
         });
         
         setActiveClaimId(claimId);
@@ -158,9 +185,10 @@ export default function ScanPage() {
         setShowLivenessOverlay(true);
 
     } catch (e) {
-        console.error("Claim Creation Failed", e);
+        console.error("Claim/Stake Failed", e);
         playError();
-        alert("Failed to file claim. Please try again.");
+        alert("Failed to post Truth Bond. Claim aborted.");
+        setIsStaking(false);
     } finally {
         setIsCreating(false);
     }

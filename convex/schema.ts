@@ -52,6 +52,14 @@ export default defineSchema({
     // Blockchain Settlement
     settlementChain: v.optional(v.string()), // "HEDERA" | "BASE"
     settlementTxHash: v.optional(v.string()),
+
+    // ============================================
+    // THE TRUTH BOND (Staking)
+    // ============================================
+    stakeAmount: v.optional(v.number()), // e.g. 5 (USDC)
+    stakeCurrency: v.optional(v.string()), // "USDC"
+    stakeTxHash: v.optional(v.string()),
+    stakeStatus: v.optional(v.string()), // "LOCKED", "SLASHED", "RETURNED"
     
     // ============================================
     // NEW: LIVENESS (God-Tier Feature)

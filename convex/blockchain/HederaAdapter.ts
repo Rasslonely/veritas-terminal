@@ -103,4 +103,38 @@ export class HederaAdapter implements IBlockchainAdapter {
       return false; // Don't crash, just report failure
     }
   }
+
+  async stake(amount: number, userAddress: string): Promise<string> {
+      // For Hedera, we'd use HTS (Hedera Token Service)
+      // For this demo, we'll log the "STAKE_LOCKED" event to HCS
+      return this.logEvidence(JSON.stringify({
+          type: "STAKE_LOCKED",
+          user: userAddress,
+          amount: amount,
+          currency: "HBAR",
+          timestamp: Date.now()
+      }));
+  }
+
+  async slashStake(userAddress: string, amount: number): Promise<string> {
+      // Log SLASH event
+      return this.logEvidence(JSON.stringify({
+          type: "STAKE_SLASHED",
+          user: userAddress,
+          amount: amount,
+          reason: "FRAUD_DETECTED",
+          timestamp: Date.now()
+      }));
+  }
+
+  async returnStake(userAddress: string, amount: number): Promise<string> {
+      // Log RETURN event
+      return this.logEvidence(JSON.stringify({
+          type: "STAKE_RETURNED",
+          user: userAddress,
+          amount: amount,
+          reason: "CLAIM_VERIFIED",
+          timestamp: Date.now()
+      }));
+  }
 }
