@@ -204,6 +204,21 @@ export default defineSchema({
     // Vector Index for Semantic Search
     .vectorIndex("by_embedding", {
       vectorField: "embedding",
-      dimensions: 3072, // Updated to match text-embedding-004
+      dimensions: 3072,
     }),
+
+  // ============================================
+  // ERC-8004 AGENT ECONOMY (Discovery Layer)
+  // ============================================
+  jobs: defineTable({
+    claimId: v.id("claims"),
+    status: v.string(), // "OPEN", "LOCKED", "VALIDATED", "COMPLETED"
+    rewardAmount: v.number(), // Payment for agents
+    requiredRoles: v.array(v.string()), // ["LAWYER", "AUDITOR"]
+    assignedAgents: v.array(v.id("users")), 
+    validationProof: v.optional(v.string()), // ERC-8004 Validation Hash
+    createdAt: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_claim", ["claimId"]),
 });

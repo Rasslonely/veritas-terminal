@@ -14,7 +14,7 @@ export const verifyTestimony = action({
     claimId: v.id("claims"),
   },
   handler: async (ctx, args) => {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash" });
 
     // 1. Fetch the image execution context
     // In a real scenario, we might need to fetch the image blob if passing directly,

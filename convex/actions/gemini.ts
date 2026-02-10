@@ -31,7 +31,7 @@ export const analyzeEvidence = action({
 
     // 3. Initialize Gemini Model
     const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash",
         generationConfig: { responseMimeType: "application/json" } 
     });
 
@@ -147,7 +147,7 @@ export const verifyLiveness = action({
 
       // 2. Gemini Analysis
       const model = genAI.getGenerativeModel({ 
-          model: "gemini-2.5-flash",
+          model: "gemini-3-flash",
           generationConfig: { responseMimeType: "application/json" } 
       });
 

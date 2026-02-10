@@ -174,4 +174,41 @@ contract ClaimMarket {
 | **Oracle of Elements** | Low | **$0** | ⭐⭐⭐⭐ (Undeniable Truth) |
 | **Truth Markets** | High | **$0** | ⭐⭐⭐⭐⭐ (Degens Love It) |
 
-**Recommendation:** Start with **Voight-Kampff**. It requires no external contracts or APIs, just clever use of the existing Gemini model. It creates the most dramatic demo moment.
+
+---
+
+# ✅ 4. IMPLEMENTED: The "God-Tier" Upgrades (Ready for Demo)
+These features have been successfully integrated into the Veritas Core (`convex/actions/gemini.ts`) and are live.
+
+## 4.1. 🛡️ Flash Policy NFTs (RWA Tokenization)
+**Mission:** Transform insurance policies from database rows into tradeable, burnable Real World Assets (RWAs) on Hedera.
+*   **Mechanism:**
+    1.  **Mint:** When a policy is purchased (or simulated), a **unique HTS Token (NFT)** is minted to the user's wallet.
+    2.  **Metadata:** Contains asset details (e.g., "MacBook Pro M3", Coverage: $2000).
+    3.  **Burn:** Upon successful claim payout, the NFT is **burned** on-chain to prevent double-dipping.
+*   **Status:** **LIVE** (Mints on Scan, Burns on Payout).
+
+## 4.2. ⚖️ The Truth Bond (DeFi Staking)
+**Mission:** "Skin in the Game." Eliminate spam by requiring financial commitment.
+*   **Mechanism:**
+    1.  **Stake:** To file a claim, a user must stake **5 USDC/HBAR**.
+    2.  **Lock:** Funds are held in escrow (simulated via `adapter.stake`).
+    3.  **Slash:** If AI detects fraud (e.g., "Recycled Photo"), the stake is **slashed** (sent to Treasury).
+    4.  **Return:** If approved, stake is returned + payout.
+*   **Status:** **LIVE** (Integrated into `ScanPage` claim flow).
+
+## 4.3. 📦 HCS Black Box (Immutable Audit)
+**Mission:** "Trust Physics, Not Servers."
+*   **Mechanism:**
+    1.  **Log:** Every AI Analysis, Voice Testimony, and Verdict is logged to **Hedera Consensus Service (HCS)**.
+    2.  **Hash:** The data is hashed, ensuring the historical record cannot be altered by Veritas admins.
+    3.  **Verify:** Users can verify the "Proof of Logic" on any Hedera explorer.
+*   **Status:** **LIVE** (Logs every `analyzeEvidence` call).
+
+## 4.4. 🕵️ Voight-Kampff Protocol (Liveness & Voice)
+**Mission:** Anti-spoofing and intent verification.
+*   **Mechanism:**
+    1.  **Liveness Challenge:** "Place coin next to item" (Randomized instructions).
+    2.  **Voice Analysis:** Analyzing discrepancies between "What happened" and "What is shown."
+*   **Status:** **LIVE** (Integrated into `ScanPage`).
+
