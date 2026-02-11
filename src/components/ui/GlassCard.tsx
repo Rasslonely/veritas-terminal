@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  intensity?: "low" | "medium" | "high";
+  intensity?: "low" | "medium" | "high" | "tactical";
   gradient?: "none" | "emerald" | "subtle";
   hoverEffect?: boolean;
 }
@@ -14,6 +14,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       low: "bg-black/20 backdrop-blur-md border-white/5",
       medium: "bg-black/40 backdrop-blur-xl border-white/10",
       high: "bg-black/60 backdrop-blur-2xl border-white/20",
+      tactical: "bg-zinc-950/80 backdrop-blur-3xl border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.5)]",
     };
 
     const gradientStyles = {

@@ -245,7 +245,23 @@ These features have been successfully integrated into the Veritas Core (`convex/
 *   **Mechanism:**
     1.  **Holographic Skeletons:** Glass-shimmer ghost UI to maintain layout integrity during data retrieval.
     2.  **Staggered Entry:** Staggered `framer-motion` animations for sequential data "Nexus Syncing."
-*   **Status:** **LIVE** (Implemented in `ClaimsList.tsx` and `ClaimsSkeleton.tsx`).
+*   **Status:** **LIVE** (Implemented in `ClaimsList.tsx`, `ClaimsSkeleton.tsx`, and `HallOfJustice.tsx`).
+
+## 4.10. 🏛️ Hall of Justice: Tactical Overhaul (World Class UI)
+**Mission:** Elevate the public verification feed to an authoritative, "Blade Runner" style investigative magazine.
+*   **Mechanism:**
+    1.  **Tactical Ornaments:** SVG corner brackets and unique `NXS` Nexus IDs for every archive node.
+    2.  **Cinematic Overlays:** Animated horizontal scanlines and glass-frosted "Tactical" card intensity.
+    3.  **Neural Consensus Meters:** High-fidelity animated meters showing "Neural Confidence" and "Peer Consensus" levels.
+*   **Status:** **LIVE** (Implemented in `HallOfJustice.tsx`).
+
+## 4.11. 🌌 Global Aura Consistency (Atmospheric UX)
+**Mission:** Unified visual signature across all operational theaters.
+*   **Mechanism:**
+    1.  **Neon Signature:** Intensified "Neon Emerald" radial gradients in the global layout for a state-of-the-art cinematic feel.
+    2.  **Neural Blobs:** Slow-moving, amorphous colorful blobs that provide depth and parallax to the background.
+    3.  **Theme Tints:** Dynamic auras that adapt to page context (Emerald/Blue for the Nexus).
+*   **Status:** **LIVE** (Implemented in `DashboardLayout.tsx` and `HallOfJustice.tsx`).
 
 ---
 
