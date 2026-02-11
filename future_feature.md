@@ -212,3 +212,17 @@ These features have been successfully integrated into the Veritas Core (`convex/
     2.  **Voice Analysis:** Analyzing discrepancies between "What happened" and "What is shown."
 *   **Status:** **LIVE** (Integrated into `ScanPage`).
 
+## 4.5. 🕸️ The Evidence Graph (Fractal Logic)
+**Mission:** Non-linear investigation via autonomous sub-agents.
+*   **Mechanism:**
+    1.  **Branching:** Master Orchestrator spawns specialized agents (Physical, Metadata, Legal) for focused "deep-dive" investigative rounds.
+    2.  **Consensus:** Gemini 3 synthesizes conflicting arguments from the graph into a supreme verdict.
+*   **Status:** **LIVE** (Integrated into `Command Deck` and `orchestrator.ts`).
+
+## 4.6. 🛠️ The Policy Forge (Neuroblox Logic)
+**Mission:** No-code visual architecture for generative AI insurance policies.
+*   **Mechanism:**
+    1.  **Logic Bricks:** Underwriters use a visual editor to drag-and-drop agent behaviors and payout rules.
+    2.  **Compiler:** Translates visual logic into high-fidelity AI system prompts and Solidity-ready configurations.
+*   **Status:** **LIVE** (Integrated into `/admin/forge`).
+

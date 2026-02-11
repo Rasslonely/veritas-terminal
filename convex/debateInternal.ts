@@ -4,15 +4,17 @@ import { v } from "convex/values";
 export const insertMessage = internalMutation({
   args: {
     claimId: v.id("claims"),
+    parentId: v.optional(v.id("debateMessages")),
     agentRole: v.string(),
     agentName: v.string(),
     content: v.string(),
     round: v.number(),
     isOnChain: v.boolean(),
     txHash: v.optional(v.string()),
+    branchType: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await ctx.db.insert("debateMessages", {
+    return await ctx.db.insert("debateMessages", {
         createdAt: Date.now(),
         ...args
     });

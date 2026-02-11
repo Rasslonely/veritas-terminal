@@ -22,7 +22,7 @@ export function BottomNav() {
   const { playClick } = useAudio();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-6">
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-6 md:hidden">
       <div className="bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl h-16 flex justify-between items-center px-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;

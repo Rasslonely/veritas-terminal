@@ -1,6 +1,8 @@
 
 
 import { AuthCheck } from "../auth/AuthCheck";
+import { Sidebar } from "./Sidebar";
+import { cn } from "@/lib/utils";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -21,7 +23,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
 
 
-      <main className="relative z-10 px-4 pt-20 pb-32 max-w-md mx-auto w-full">
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
+
+      <main className={cn(
+        "relative z-10 px-6 pt-20 pb-32 max-w-7xl mx-auto w-full transition-all duration-500",
+        "md:pl-32"
+      )}>
         {children}
       </main>
 

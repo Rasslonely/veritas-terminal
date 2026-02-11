@@ -14,6 +14,8 @@ import type * as actions_debateInternal from "../actions/debateInternal.js";
 import type * as actions_gemini from "../actions/gemini.js";
 import type * as actions_rag from "../actions/rag.js";
 import type * as agent_identity from "../agent/identity.js";
+import type * as agent_orchestrator from "../agent/orchestrator.js";
+import type * as agent_policy_compiler from "../agent/policy_compiler.js";
 import type * as blockchain_BaseAdapter from "../blockchain/BaseAdapter.js";
 import type * as blockchain_HederaAdapter from "../blockchain/HederaAdapter.js";
 import type * as blockchain_adapter from "../blockchain/adapter.js";
@@ -43,6 +45,8 @@ declare const fullApi: ApiFromModules<{
   "actions/gemini": typeof actions_gemini;
   "actions/rag": typeof actions_rag;
   "agent/identity": typeof agent_identity;
+  "agent/orchestrator": typeof agent_orchestrator;
+  "agent/policy_compiler": typeof agent_policy_compiler;
   "blockchain/BaseAdapter": typeof blockchain_BaseAdapter;
   "blockchain/HederaAdapter": typeof blockchain_HederaAdapter;
   "blockchain/adapter": typeof blockchain_adapter;

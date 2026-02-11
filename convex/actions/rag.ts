@@ -78,6 +78,6 @@ export const retrieveContext = action({
             return chunk?.content;
         }));
 
-        return context.filter((c): c is string => c !== undefined).join("\n---\n");
+        return context.filter((c: string | undefined): c is string => c !== undefined).join("\n---\n");
     }
 });

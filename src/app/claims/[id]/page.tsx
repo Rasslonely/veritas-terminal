@@ -8,13 +8,15 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DebateThread } from "@/components/debate/DebateThread";
 import { AnalysisResult } from "@/components/claim/AnalysisResult";
 import { MatrixLog } from "@/components/debate/MatrixLog";
-import { InterrogationModal } from "@/components/claims/InterrogationModal"; // <--- NEW
+import { InterrogationModal } from "@/components/claims/InterrogationModal";
+import { EvidenceGraph } from "@/components/debate/EvidenceGraph";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Gavel, FileText, Activity, DollarSign } from "lucide-react";
+import { Gavel, FileText, Activity, DollarSign, ListTree } from "lucide-react";
 import { useNetwork } from "@/context/NetworkContext";
+import { LinearAdjudicationFeed } from "@/components/debate/LinearAdjudicationFeed";
 
 export default function ClaimPage({ params }: { params: { id: string } }) {
   const claimId = params.id as Id<"claims">;
@@ -170,11 +172,15 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
             <TabsList className="grid w-full grid-cols-2 bg-white/5">
                 <TabsTrigger value="debate">
                     <Gavel className="w-4 h-4 mr-2" />
-                    The Council
+                    Tribunal
+                </TabsTrigger>
+                <TabsTrigger value="graph">
+                    <ListTree className="w-4 h-4 mr-2" />
+                    Timeline
                 </TabsTrigger>
                 <TabsTrigger value="analysis">
-                    <Activity className="w-4 h-4 mr-2" />
-                    AI Analysis
+                    <FileText className="w-4 h-4 mr-2" />
+                    Audit
                 </TabsTrigger>
             </TabsList>
             
@@ -186,6 +192,16 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
                 />
             </TabsContent>
             
+            <TabsContent value="graph" className="mt-4">
+                {/* Adaptive View: Interactive Graph on Desktop, Tactical Feed on Mobile */}
+                <div className="hidden md:block h-[500px] border border-white/5 rounded-3xl overflow-hidden bg-zinc-950/50">
+                    <EvidenceGraph claimId={claimId} />
+                </div>
+                <div className="md:hidden">
+                    <LinearAdjudicationFeed claimId={claimId} />
+                </div>
+            </TabsContent>
+
             <TabsContent value="debate" className="mt-4 space-y-4">
                 {/* Debate Thread */}
                 <DebateThread claimId={claimId} />
@@ -201,7 +217,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
                         onClick={handleStartTribunal}
                         className="w-full bg-primary/20 hover:bg-primary/40 text-primary border border-primary/50 h-12 text-lg font-bold tracking-widest shadow-[0_0_20px_rgba(59,130,246,0.4)] animate-pulse"
                     >
-                        COMMENCE TRIBUNAL
+                        COMMENCE FRACTAL TRIBUNAL
                     </Button>
                 )}
 

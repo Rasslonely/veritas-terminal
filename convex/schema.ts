@@ -95,14 +95,16 @@ export default defineSchema({
     .index("by_created", ["createdAt"]),
 
   // ============================================
-  // DEBATE MESSAGES (The AI Jury)
+  // DEBATE MESSAGES (The AI Jury - NOW BRANCHING)
   // ============================================
   debateMessages: defineTable({
     claimId: v.id("claims"),
+    parentId: v.optional(v.id("debateMessages")), // For branching (Fractal Logic)
     
     // Agent Info
     agentRole: v.string(),      // "LAWYER", "AUDITOR", "VERDICT"
     agentName: v.string(),      // "Agent A: The Defender"
+    branchType: v.optional(v.string()), // "PHYSICAL", "METADATA", "LEGAL"
     
     // Message Content
     content: v.string(),
@@ -118,9 +120,10 @@ export default defineSchema({
     
     // Timestamp
     createdAt: v.number(),
-    round: v.number(),          // Debate round (1, 2, 3...)
+    round: v.number(),          // Debate round or depth
   })
     .index("by_claim", ["claimId"])
+    .index("by_parent", ["parentId"])
     .index("by_claim_round", ["claimId", "round"]),
 
   // ============================================
@@ -221,4 +224,19 @@ export default defineSchema({
   })
     .index("by_status", ["status"])
     .index("by_claim", ["claimId"]),
+
+  // ============================================
+  // POLICY FORGE (Visual Agent Builder)
+  // ============================================
+  policyBlueprints: defineTable({
+    name: v.string(),
+    description: v.string(),
+    visualBlocks: v.string(),    // JSON from React Flow
+    generatedPrompt: v.string(), // AI-compiled system prompt
+    config: v.any(),             // Compiled Solidity/Agent params
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_name", ["name"]),
 });

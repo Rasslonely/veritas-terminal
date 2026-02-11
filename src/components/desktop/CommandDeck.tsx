@@ -17,8 +17,10 @@ const DUMMY_LOGS = [
 ];
 
 import { VerdictCard } from "@/components/debate/VerdictCard";
+import { EvidenceGraph } from "@/components/debate/EvidenceGraph";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, SearchCode, Database, Cpu } from "lucide-react";
+import { CustomConnectButton } from "@/components/auth/CustomConnectButton";
 
 export function CommandDeck() {
   const recentClaims = useQuery(api.claims.getRecentClaims) || [];
@@ -29,27 +31,77 @@ export function CommandDeck() {
   const activeAgents = 1024 + (recentClaims?.length || 0);
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono relative bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-black to-black">
-      {/* Background Dot Grid */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:20px_20px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+    <div className="text-white font-mono relative">
 
-      {/* VERDICT OVERLAY MODAL */}
+      {/* INVESTIGATOR OVERLAY */}
       {selectedClaim && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-           <div className="relative w-full max-w-lg">
-              <button 
-                onClick={() => setSelectedClaim(null)}
-                className="absolute -top-4 -right-4 bg-white/10 hover:bg-white/20 rounded-full p-2 text-white transition-colors z-50"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <VerdictCard 
-                claimId={selectedClaim._id}
-                recipientAddress="0x5f80439206742Ac04e031665d1DFEDe11C9730aD" // Demo Address or from claim
-                confidenceScore={selectedClaim.confidence || 92}
-                analyzedSeverity={selectedClaim.severity || "CRITICAL_DAMAGE_DETECTED"}
-                payoutAmount="0.001"
-              />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl p-8 animate-in zoom-in duration-300">
+           <div className="relative w-full max-w-7xl h-[85vh] bg-zinc-950 border border-white/10 rounded-[3rem] shadow-[0_0_100px_rgba(16,185,129,0.1)] flex flex-col overflow-hidden">
+              {/* Overlay Header */}
+              <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                 <div className="flex items-center gap-6">
+                    <div>
+                       <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 font-mono">INVESTIGATION_IN_PROGRESS</div>
+                       <h2 className="text-2xl font-bold tracking-tighter">CLAIM_#{selectedClaim._id.slice(-8).toUpperCase()}</h2>
+                    </div>
+                    <div className="h-10 w-px bg-white/10 mx-2" />
+                    <div className="flex gap-8">
+                       <div className="flex flex-col">
+                          <span className="text-[10px] text-white/30 uppercase font-mono">Status</span>
+                          <span className="text-xs font-bold text-emerald-400">{selectedClaim.status}</span>
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-[10px] text-white/30 uppercase font-mono">Evidence_Source</span>
+                          <span className="text-xs font-bold text-white/70">DECENTRALIZED_UPLINK</span>
+                       </div>
+                    </div>
+                 </div>
+                 <button 
+                    onClick={() => setSelectedClaim(null)}
+                    className="bg-white/5 hover:bg-white/10 rounded-full p-4 text-white/50 hover:text-white transition-all border border-white/10"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+              </div>
+
+              {/* Overlay Content */}
+              <div className="flex-1 grid grid-cols-12 overflow-hidden">
+                  {/* Left: Graph */}
+                  <div className="col-span-8 p-8 bg-zinc-900/40 relative">
+                     <EvidenceGraph claimId={selectedClaim._id} />
+                  </div>
+
+                  {/* Right: Verdict & Analysis */}
+                  <div className="col-span-4 p-8 border-l border-white/5 bg-black/40 overflow-y-auto custom-scrollbar">
+                     <VerdictCard 
+                        claimId={selectedClaim._id}
+                        recipientAddress="0x5f80439206742Ac04e031665d1DFEDe11C9730aD"
+                        confidenceScore={selectedClaim.confidence || 92}
+                        analyzedSeverity={selectedClaim.severity || "CRITICAL_DAMAGE_DETECTED"}
+                        payoutAmount="0.001"
+                      />
+                      
+                      <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                         <h3 className="text-xs font-bold text-white/50 uppercase tracking-widest flex items-center gap-2">
+                            <SearchCode className="w-4 h-4" /> Forensic Telemetry
+                         </h3>
+                         <div className="space-y-2 font-mono text-[10px]">
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                               <span className="text-white/30">GPS_ACCURACY</span>
+                               <span className="text-emerald-500">±2.4m</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                               <span className="text-white/30">IMAGE_HASH</span>
+                               <span className="text-white/70 truncate w-32 ml-4">SHA-256: 8e2...f91</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                               <span className="text-white/30">HCS_PROOF</span>
+                               <span className="text-emerald-500">VERIFIED</span>
+                            </div>
+                         </div>
+                      </div>
+                  </div>
+              </div>
            </div>
         </div>
       )}
@@ -70,9 +122,13 @@ export function CommandDeck() {
                     </h1>
                     <p className="text-xs text-emerald-500/50 tracking-[0.2em] mt-1">SECURE OPERATIONS CENTER // NODE_ID: VTS-ALPHA</p>
                 </div>
-                <div className="flex gap-4">
-                    <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-xs rounded animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                        SYSTEM_NORMAL
+                <div className="flex gap-4 items-center">
+                    <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-[10px] font-bold rounded animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.2)] tracking-widest">
+                        SECURE_CONNECTION: ACTIVE
+                    </div>
+                    <div className="h-4 w-px bg-white/10 mx-2" />
+                    <div className="scale-75 origin-right">
+                        <CustomConnectButton />
                     </div>
                 </div>
             </motion.div>
@@ -140,8 +196,13 @@ export function CommandDeck() {
             {/* Live Feed */}
             <div className="flex-1 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-4 font-mono text-xs flex flex-col hover:border-emerald-500/30 transition-colors duration-300 h-[400px]">
                 <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
-                    <span className="text-emerald-500 font-bold tracking-widest">LIVE_FEED</span>
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+                    <div className="flex items-center gap-2">
+                       <span className="text-emerald-500 font-bold tracking-widest">LIVE_OPERATIONS_FEED</span>
+                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+                    </div>
+                    <a href="/admin/forge" className="text-[10px] text-white/30 hover:text-emerald-400 transition-colors flex items-center gap-1 font-bold">
+                       <Cpu className="w-3 h-3" /> POLICY_FORGE
+                    </a>
                 </div>
                 <div className="space-y-3 overflow-y-auto pr-2">
                     {/* Render Real Claims if map exists, else use dummy logs for visual fidelity */}

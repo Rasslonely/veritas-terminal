@@ -2240,6 +2240,11 @@ const DEMO_CLAIMS = [
 - [x] **Documentation**: Finalized `demo_script.md` and `walkthrough.md` with latest screenshots.
 - [x] **System Status**: **DEMO READY** (Verdict: 100/100).
 
+### Phase 15: Fractal & Neuroblox (God-Tier Infrastructure) 💎
+- [x] **Evidence Graph (Fractal Debate)**: Implemented multi-branch autonomous sub-agents with React Flow visualization.
+- [x] **Policy Forge (Neuroblox)**: Visual logic brick builder for generative AI policies.
+- [x] **Adaptive UI**: Unified the Mobile "Field View" and Desktop "Command Deck" with real-time investigator overlays.
+
 ---
 
 ## 9. Future Frontiers (Post-Hackathon)

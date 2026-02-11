@@ -2,10 +2,11 @@
 
 import { FieldView } from "@/components/mobile/FieldView";
 import { CommandDeck } from "@/components/desktop/CommandDeck";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 
 export default function Home() {
   return (
-    <main>
+    <DashboardLayout>
         {/* Mobile View: Visible only on small screens */}
         <div className="block md:hidden">
             <FieldView />
@@ -15,6 +16,6 @@ export default function Home() {
         <div className="hidden md:block">
             <CommandDeck />
         </div>
-    </main>
+    </DashboardLayout>
   );
 }

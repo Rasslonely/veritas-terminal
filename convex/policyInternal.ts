@@ -52,3 +52,21 @@ export const updatePolicyStatus = internalMutation({
         });
     }
 });
+
+export const saveBlueprint = internalMutation({
+  args: {
+    name: v.string(),
+    description: v.string(),
+    visualBlocks: v.string(),
+    generatedPrompt: v.string(),
+    config: v.any(),
+    createdBy: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("policyBlueprints", {
+      ...args,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+  },
+});
