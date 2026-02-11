@@ -14,61 +14,100 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ClaimsList } from "@/components/claim/ClaimsList";
 import { HoloCard } from "@/components/ui/HoloCard";
+import { TrustStats } from "@/components/profile/TrustStats";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
-    // Demo User Data
-    const userRole = "Field Agent";
     const walletAddress = "0x742...f44e";
+    const userRole = "Field Agent";
     
     return (
         <DashboardLayout>
-            <div className="space-y-6 pb-24">
-                {/* Identity Header */}
-                <div className="relative overflow-hidden rounded-2xl bg-black border border-white/10 p-6 group">
-                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-black to-blue-500/10 opacity-50" />
-                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-500 p-[1px]">
-                            <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
-                                <UserIcon className="w-8 h-8 text-white" />
+            <div className="pb-24">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 content-start">
+                    
+                    {/* LEFT COLUMN: Identity Dossier */}
+                    <div className="md:col-span-4 space-y-6">
+                        {/* Identity Header */}
+                        <div className="relative overflow-hidden rounded-2xl bg-black border border-white/10 p-4 md:p-6 group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-black to-blue-500/10 opacity-50" />
+                            <div className="relative z-10 flex items-center gap-4">
+                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-500 p-[1px]">
+                                    <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
+                                        <UserIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <h2 className="text-lg md:text-xl font-bold text-white leading-tight">Guest Operator</h2>
+                                    <p className="text-[10px] md:text-xs font-mono text-muted-foreground">{walletAddress}</p>
+                                    <Badge variant="outline" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] md:text-[10px] px-2 py-0">
+                                        {userRole}
+                                    </Badge>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-white">Guest Operator</h2>
-                            <p className="text-xs font-mono text-muted-foreground">{walletAddress}</p>
-                            <Badge variant="outline" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-                                {userRole}
-                            </Badge>
+
+                        {/* Tactical ID Card */}
+                        <AgentLicense />
+
+                        {/* Desktop Only Extra Info */}
+                        <div className="hidden md:block p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                           <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Operator Context</h3>
+                           <div className="space-y-3">
+                              <div className="flex justify-between items-center text-[10px]">
+                                 <span className="text-white/30">Node_ID</span>
+                                 <span className="text-emerald-500 font-mono">VTS-ALPHA-882</span>
+                              </div>
+                              <div className="flex justify-between items-center text-[10px]">
+                                 <span className="text-white/30">Session_Liveness</span>
+                                 <span className="text-white font-mono">STABLE</span>
+                              </div>
+                              <div className="flex justify-between items-center text-[10px]">
+                                 <span className="text-white/30">Clearance_Level</span>
+                                 <span className="text-white font-mono">LEVEL_3</span>
+                              </div>
+                           </div>
                         </div>
-                     </div>
+                    </div>
+
+                    {/* RIGHT COLUMN: Operational Analytics */}
+                    <div className="md:col-span-8 space-y-8">
+                        {/* Stats Visualization - DESKTOP ONLY */}
+                        <div className="hidden md:block space-y-4">
+                            <h3 className="text-xs font-bold text-white/50 uppercase tracking-[0.3em] flex items-center gap-2">
+                                <Zap className="w-4 h-4 text-emerald-500" /> Personnel_Analytics
+                            </h3>
+                            <TrustStats />
+                        </div>
+
+                        {/* Operations Tabs */}
+                        <Tabs defaultValue="wallet" className="w-full">
+                            <TabsList className="grid w-full grid-cols-3 bg-white/5 h-12 rounded-xl mb-6">
+                                <TabsTrigger value="wallet" className="rounded-lg data-[state=active]:bg-white/10">Wallet</TabsTrigger>
+                                <TabsTrigger value="history" className="rounded-lg data-[state=active]:bg-white/10">History</TabsTrigger>
+                                <TabsTrigger value="store" className="rounded-lg data-[state=active]:bg-white/10">Market</TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="wallet" className="mt-0 space-y-4">
+                                <ActivePolicies />
+                            </TabsContent>
+
+                            <TabsContent value="history" className="mt-0">
+                                <ClaimsList />
+                            </TabsContent>
+
+                            <TabsContent value="store" className="mt-0">
+                                <div className="text-white/50 text-center py-20 border border-dashed border-white/5 rounded-3xl bg-white/[0.02]">
+                                    <div className="inline-flex p-4 rounded-full bg-white/5 mb-4">
+                                        <Zap className="w-8 h-8 text-zinc-500" />
+                                    </div>
+                                    <p className="text-sm font-medium">Neural Market Syncing...</p>
+                                    <p className="text-[10px] text-zinc-600 mt-1 uppercase tracking-widest">Protocol Version v3.4 Pending</p>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+                    </div>
                 </div>
-
-                {/* IDENTITY SECTION */}
-        <section className="px-4">
-             <AgentLicense />
-        </section>
-
-        {/* TABS SECTION */}
-        <Tabs defaultValue="wallet" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-white/5">
-                        <TabsTrigger value="wallet">Wallet</TabsTrigger>
-                        <TabsTrigger value="history">History</TabsTrigger>
-                        <TabsTrigger value="store">Store</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="wallet" className="mt-4 space-y-4">
-                        <ActivePolicies />
-                    </TabsContent>
-
-                    <TabsContent value="history" className="mt-4">
-                         <ClaimsList />
-                    </TabsContent>
-
-                        <TabsContent value="store" className="mt-4">
-                            {/* <PolicyStore /> */}
-                            <div className="text-white/50 text-center py-10">Store Coming Soon</div>
-                        </TabsContent>
-                </Tabs>
             </div>
         </DashboardLayout>
     );

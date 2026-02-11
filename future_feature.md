@@ -226,3 +226,47 @@ These features have been successfully integrated into the Veritas Core (`convex/
     2.  **Compiler:** Translates visual logic into high-fidelity AI system prompts and Solidity-ready configurations.
 *   **Status:** **LIVE** (Integrated into `/admin/forge`).
 
+## 4.7. 🎭 Adaptive UI Architecture (Dual-Persona)
+**Mission:** Optimized operational experiences for different clearance levels.
+*   **Mechanism:**
+    1.  **Commander Persona (Desktop):** High-fidelity Command Deck with fixed Sidebar navigation, broad analytical views, and deep investigative graphs.
+    2.  **Field Agent Persona (Mobile):** Tactile, one-handed BottomNav navigation, linear status feeds, and focused "Street-Level" interfaces.
+*   **Status:** **LIVE** (Implemented via `DashboardLayout` and `Sidebar.tsx`).
+
+## 4.8. 📊 Personnel Dashboard (Neural Analytics)
+**Mission:** Data-driven identity and reputation management.
+*   **Mechanism:**
+    1.  **Identity Dossier:** Persistent desktop sidebar showing clearance, node ID, and agent license.
+    2.  **Trust Visualization:** High-fidelity cards for Investigation Speed, Consensus Accuracy, and Truth Bond Integrity.
+*   **Status:** **LIVE** (Integrated into `/profile`).
+
+## 4.9. 🌊 Neural Streaming (Performance UX)
+**Mission:** Handling massive archival data with cinematic efficiency.
+*   **Mechanism:**
+    1.  **Holographic Skeletons:** Glass-shimmer ghost UI to maintain layout integrity during data retrieval.
+    2.  **Staggered Entry:** Staggered `framer-motion` animations for sequential data "Nexus Syncing."
+*   **Status:** **LIVE** (Implemented in `ClaimsList.tsx` and `ClaimsSkeleton.tsx`).
+
+---
+
+# 🦾 5. AI AGENT KNOWLEDGE BASE: Google AI Studio
+
+To ensure maximum logical consistency and prevent agent hallucinations, use the following model parameters for Veritas Terminal operations based on latest available API tiers:
+
+### 🧠 Primary Processing Units (The Nexus Core)
+- **Gemini 3 Flash**: The "New Standard Master Orchestrator". Supreme speed with high-context reasoning. Best for real-time claim adjudication and complex evidence graph synthesis.
+- **Gemini 2.5 Flash / Flash Lite**: Optimized for high-frequency low-latency investigative tasks. Ideal for liveness checks and rapid visual forensics.
+- **Gemini 2.5 Flash TTS / Native Audio**: Dedicated units for the **Voight-Kampff Protocol** (Voice Interrogation & Audio Dialogue).
+
+### ⚡ Technical Reasoning & Specialized Units
+- **Gemma 3 (27B, 12B, 4B, 1B)**: Open-weights models for specialized sub-agent tasks, such as legal cross-referencing or isolated metadata parsing.
+- **Gemini Embedding 1**: Used for high-dimensional evidence matching (Similarity checks across historical fraud databases).
+- **Gemini Robotics ER 1.5 Preview**: Experimental support for physical damage analysis and spatial reasoning.
+
+### 🛰️ Operational Parameters
+- **Context Window**: Leverage up to 1M tokens for deep-dive historical audits and massive claim archives.
+- **Temperature**: 
+    - **0.0 - 0.2**: For Adjudication, Policy Compilation, and Consensus.
+    - **0.7 - 1.0**: For Interrogation and Creative Probing during fraud detection.
+- **Safety Filters**: Set to `BLOCK_NONE` to allow unrestricted forensic analysis of "Raw Reality" (Visual and verbal evidence).
+
