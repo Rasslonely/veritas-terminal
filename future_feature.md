@@ -263,6 +263,14 @@ These features have been successfully integrated into the Veritas Core (`convex/
     3.  **Theme Tints:** Dynamic auras that adapt to page context (Emerald/Blue for the Nexus).
 *   **Status:** **LIVE** (Implemented in `DashboardLayout.tsx` and `HallOfJustice.tsx`).
 
+## 4.12. 🏛️ The Great De-Coupling (Nexus vs Ledger vs Dossier)
+**Mission:** Resolve UI redundancy by assigning unique semantic identities and layouts to data views.
+*   **Mechanism:**
+    1.  **Archives as Ledger**: High-density table view with monospaced data, Nexus IDs, and HCS hashes for forensic audit.
+    2.  **Profile as Dossier**: Personal operational record filtered to user-specific data with tactile performance cards.
+    3.  **Variant-based Rendering**: Single component (`ClaimsList`) supporting multiple structural modes.
+*   **Status:** **LIVE** (Implemented in `ClaimsList.tsx`, `claims/page.tsx`, and `profile/page.tsx`).
+
 ---
 
 # 🦾 5. AI AGENT KNOWLEDGE BASE: Google AI Studio

@@ -90,13 +90,14 @@ export const getUserClaims = query({
   args: { userId: v.optional(v.id("users")) },
   handler: async (ctx, args) => {
     if (!args.userId) {
-        // Return empty or recent if no user
+        // GLOBAL LEDGER MODE: Return all recent claims across the system
          return await ctx.db
             .query("claims")
             .withIndex("by_created")
             .order("desc")
-            .take(20);
+            .take(100); 
     }
+    // PERSONAL DOSSIER MODE: Filter specifically by the target user
     return await ctx.db
       .query("claims")
       .withIndex("by_user", (q) => q.eq("userId", args.userId!))

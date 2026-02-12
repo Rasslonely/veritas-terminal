@@ -6,19 +6,34 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ShieldCheck, ShieldAlert, Clock, ChevronRight, Cpu } from "lucide-react";
+import { 
+    ShieldCheck, 
+    ShieldAlert, 
+    Clock, 
+    ChevronRight, 
+    Cpu, 
+    Hash, 
+    Database, 
+    Fingerprint 
+} from "lucide-react";
 import { ClaimsSkeleton } from "./ClaimsSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Id } from "../../../convex/_generated/dataModel";
 
-export function ClaimsList() {
-    const claims = useQuery(api.claims.getUserClaims, {}); 
-    const [displayCount, setDisplayCount] = useState(6);
+interface ClaimsListProps {
+    variant?: "dossier" | "ledger";
+    userId?: Id<"users">;
+}
+
+export function ClaimsList({ variant = "dossier", userId }: ClaimsListProps) {
+    const claims = useQuery(api.claims.getUserClaims, { userId }); 
+    const [displayCount, setDisplayCount] = useState(variant === "ledger" ? 10 : 6);
     const [isStreaming, setIsStreaming] = useState(false);
 
     if (!claims) {
-        return <ClaimsSkeleton count={3} />;
+        return <ClaimsSkeleton count={variant === "ledger" ? 5 : 3} variant={variant} />;
     }
 
     const displayedClaims = claims.slice(0, displayCount);
@@ -35,8 +50,8 @@ export function ClaimsList() {
                     <ShieldCheck className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <div>
-                    <h3 className="text-lg font-medium text-white">No Claims Found</h3>
-                    <p className="text-sm text-muted-foreground">Your history is clean.</p>
+                    <h3 className="text-lg font-medium text-white">No Nexus Records</h3>
+                    <p className="text-sm text-muted-foreground">The ledger is currently clear.</p>
                 </div>
             </motion.div>
         );
@@ -45,80 +60,130 @@ export function ClaimsList() {
     const loadMore = () => {
         setIsStreaming(true);
         setTimeout(() => {
-            setDisplayCount(prev => prev + 4);
+            setDisplayCount(prev => prev + (variant === "ledger" ? 10 : 4));
             setIsStreaming(false);
         }, 800);
     };
 
     return (
         <div className="space-y-6">
-            <motion.div 
-                className="space-y-4"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                    visible: { transition: { staggerChildren: 0.1 } }
-                }}
-            >
-                <AnimatePresence mode="popLayout">
-                    {displayedClaims.map((claim) => (
-                        <motion.div
-                            key={claim._id}
-                            variants={{
-                                hidden: { opacity: 0, y: 20 },
-                                visible: { opacity: 1, y: 0 }
-                            }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                        >
-                            <Link href={`/claims/${claim._id}`}>
-                                <Card className="p-4 bg-black/40 border-white/10 hover:border-emerald-500/50 transition-colors group relative overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                    
-                                    <div className="flex gap-4 items-start relative z-10">
-                                        <div className="w-16 h-16 rounded-md bg-white/5 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
-                                            {claim.evidenceImageUrl ? (
-                                                <img src={claim.evidenceImageUrl} alt="Evidence" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <ShieldAlert className="w-6 h-6 text-white/20" />
-                                            )}
+            {variant === "ledger" ? (
+                /* HIGH-DENSITY LEDGER VIEW (Archives) */
+                <div className="w-full overflow-hidden rounded-xl border border-white/5 bg-black/20 backdrop-blur-xl">
+                    <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10 bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+                        <div className="col-span-3">Nexus_ID</div>
+                        <div className="col-span-4">Object_Manifest</div>
+                        <div className="col-span-2 text-center">HCS_Status</div>
+                        <div className="col-span-2 text-right">Timestamp</div>
+                        <div className="col-span-1"></div>
+                    </div>
+                    <motion.div 
+                        initial="hidden"
+                        animate="visible"
+                        variants={{ visible: { transition: { staggerChildren: 0.05 } } }}
+                    >
+                        <AnimatePresence mode="popLayout">
+                            {displayedClaims.map((claim) => (
+                                <Link key={claim._id} href={`/claims/${claim._id}`}>
+                                    <motion.div
+                                        variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                                        className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-white/5 hover:bg-emerald-500/5 transition-colors items-center group cursor-pointer"
+                                    >
+                                        <div className="col-span-3 font-mono text-[11px] text-emerald-400">
+                                            NXS-{claim._id.substring(claim._id.length - 6).toUpperCase()}
                                         </div>
+                                        <div className="col-span-4 flex items-center gap-3">
+                                            <div className="w-6 h-6 rounded bg-white/5 border border-white/10 overflow-hidden shrink-0">
+                                                <img src={claim.evidenceImageUrl} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                                            </div>
+                                            <span className="text-[12px] font-medium text-white/80 line-clamp-1">
+                                                {claim.initialAnalysis?.objectDetected || "Unknown Object"}
+                                            </span>
+                                        </div>
+                                        <div className="col-span-2 flex justify-center">
+                                            <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 font-mono", getStatusColor(claim.status))}>
+                                                {claim.status}
+                                            </Badge>
+                                        </div>
+                                        <div className="col-span-2 text-right text-[10px] text-white/40 font-mono">
+                                            {formatDistanceToNow(claim.createdAt)}
+                                        </div>
+                                        <div className="col-span-1 flex justify-end">
+                                            <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-emerald-400 transition-all" />
+                                        </div>
+                                    </motion.div>
+                                </Link>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
+                </div>
+            ) : (
+                /* TACTILE DOSSIER VIEW (Profile) */
+                <motion.div 
+                    className="space-y-4"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+                >
+                    <AnimatePresence mode="popLayout">
+                        {displayedClaims.map((claim) => (
+                            <motion.div
+                                key={claim._id}
+                                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                                transition={{ duration: 0.4 }}
+                            >
+                                <Link href={`/claims/${claim._id}`}>
+                                    <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl hover:border-emerald-500/50 transition-all group relative overflow-hidden backdrop-blur-md">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                        <div className="flex gap-6 items-center relative z-10">
+                                            <div className="w-20 h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden shrink-0 relative p-1">
+                                                <img src={claim.evidenceImageUrl} alt="Evidence" className="w-full h-full object-cover rounded-lg" />
+                                                <div className="absolute top-1 right-1">
+                                                    <Fingerprint className="w-4 h-4 text-emerald-500/50" />
+                                                </div>
+                                            </div>
 
-                                        <div className="flex-1 space-y-1">
-                                            <div className="flex justify-between items-start">
-                                                <h4 className="font-bold text-white text-[13px] md:text-sm">
-                                                    {claim.initialAnalysis?.objectDetected || "Unknown Object"}
-                                                </h4>
-                                                <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 md:text-[10px]", getStatusColor(claim.status))}>
-                                                    {claim.status}
-                                                </Badge>
+                                            <div className="flex-1 space-y-2">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="space-y-1">
+                                                        <h4 className="font-black text-white text-base tracking-tight uppercase">
+                                                            {claim.initialAnalysis?.objectDetected || "Unknown Object"}
+                                                        </h4>
+                                                        <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-500/60 font-bold tracking-widest">
+                                                            <Database className="w-3 h-3" />
+                                                            ID: VERI-{claim._id.substring(claim._id.length - 4).toUpperCase()}
+                                                        </div>
+                                                    </div>
+                                                    <Badge className={cn("text-[9px] px-2 py-0.5", getStatusColor(claim.status))}>
+                                                        {claim.status}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex items-center gap-4 text-[10px] text-white/40">
+                                                    <div className="flex items-center gap-1">
+                                                        <Clock className="w-3 h-3 text-white/20" />
+                                                        {formatDistanceToNow(claim.createdAt)} ago
+                                                    </div>
+                                                    {claim.settlementTxHash && (
+                                                        <div className="flex items-center gap-1 text-emerald-400 font-bold">
+                                                            <ShieldCheck className="w-3 h-3" />
+                                                            SETTLED
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <p className="text-[11px] md:text-xs text-muted-foreground line-clamp-1">
-                                                {claim.initialAnalysis?.description || "No description available."}
-                                            </p>
-                                            
-                                            <div className="flex items-center gap-2 pt-2 text-[10px] text-muted-foreground/60 font-mono">
-                                                <Clock className="w-3 h-3" />
-                                                {formatDistanceToNow(claim.createdAt)} ago
-                                                {claim.settlementTxHash && (
-                                                    <span className="text-emerald-500 flex items-center gap-1 ml-2">
-                                                        • PAID
-                                                    </span>
-                                                )}
-                                            </div>
+                                            <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
                                         </div>
-                                        
-                                        <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-white/20 mt-6 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
                                     </div>
-                                </Card>
-                            </Link>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
-            </motion.div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
+            )}
 
             {/* Load More Controller */}
             {hasMore && (
-                 <div className="pt-4 flex flex-col items-center gap-4">
+                 <div className="pt-6 flex flex-col items-center gap-4">
                     {isStreaming ? (
                         <div className="flex flex-col items-center gap-2">
                             <motion.div 
@@ -126,21 +191,17 @@ export function ClaimsList() {
                                 transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                                 className="w-5 h-5 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full"
                             />
-                            <span className="text-[10px] font-mono text-emerald-500/50 uppercase tracking-widest animate-pulse">Neural_Syncing...</span>
+                            <span className="text-[10px] font-mono text-emerald-500/50 uppercase tracking-[0.4em] animate-pulse">Neural_Syncing...</span>
                         </div>
                     ) : (
                         <button 
                             onClick={loadMore}
-                            className="px-6 py-2 rounded-full border border-white/5 bg-white/[0.02] text-[10px] font-bold text-white/40 hover:text-white hover:bg-white/5 hover:border-white/20 transition-all uppercase tracking-[0.2em] group flex items-center gap-2"
+                            className="px-8 py-2.5 rounded-full border border-white/5 bg-white/[0.02] text-[10px] font-black text-white/40 hover:text-white hover:bg-white/10 hover:border-emerald-500/30 transition-all uppercase tracking-[0.3em] group flex items-center gap-3"
                         >
-                            <Cpu className="w-3 h-3 group-hover:text-emerald-500 transition-colors" />
-                            Load More Records
+                            <Cpu className="w-4 h-4 group-hover:text-emerald-500 transition-colors" />
+                            Expand Archives
                         </button>
                     )}
-                    
-                    <div className="text-[9px] font-mono text-white/10 uppercase tracking-widest">
-                        Total_Nodes_Found: {claims.length} // Buffer_Index: {displayCount}
-                    </div>
                  </div>
             )}
         </div>

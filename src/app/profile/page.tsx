@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
     const walletAddress = "0x742...f44e";
+    const user = useQuery(api.users.getUser, { walletAddress });
     const userRole = "Field Agent";
     
     return (
@@ -38,7 +39,9 @@ export default function ProfilePage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <h2 className="text-lg md:text-xl font-bold text-white leading-tight">Guest Operator</h2>
+                                    <h2 className="text-lg md:text-xl font-bold text-white leading-tight">
+                                        {user?.displayName || "Guest Operator"}
+                                    </h2>
                                     <p className="text-[10px] md:text-xs font-mono text-muted-foreground">{walletAddress}</p>
                                     <Badge variant="outline" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] md:text-[10px] px-2 py-0">
                                         {userRole}
@@ -93,7 +96,7 @@ export default function ProfilePage() {
                             </TabsContent>
 
                             <TabsContent value="history" className="mt-0">
-                                <ClaimsList />
+                                <ClaimsList variant="dossier" userId={user?._id} />
                             </TabsContent>
 
                             <TabsContent value="store" className="mt-0">
