@@ -7,7 +7,7 @@ import { Id } from "../_generated/dataModel";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-3-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 /**
  * The "Neuroblox" compiler for Veritas.
@@ -35,7 +35,7 @@ export const compilePolicyBlueprint = action({
       1. Define the Agent's Persona based on the "Agent Type" block.
       2. Set Payout Thresholds based on the "Monetary" blocks.
       3. Include specific "Exclusion Zones" based on the "Rule" blocks.
-      4. Ensure the prompt is optimized for Gemini 1.5/3 models.
+      4. Ensure the prompt is optimized for Gemini 1.5/2.5 models.
       
       Also, provide a Solidity-compatible configuration object.
       

@@ -14,6 +14,8 @@ import {
   Zap,
   ShieldCheck
 } from "lucide-react";
+import { useAccount } from "wagmi";
+import { isAdmin } from "@/lib/admin";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -26,6 +28,14 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { address } = useAccount();
+
+  const filteredNavItems = NAV_ITEMS.filter(item => {
+    if (item.href.startsWith("/admin")) {
+        return isAdmin(address);
+    }
+    return true;
+  });
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 z-50 w-20 flex flex-col items-center py-8 bg-black/40 backdrop-blur-3xl border-r border-white/5 shadow-2xl">
@@ -38,7 +48,7 @@ export function Sidebar() {
 
       {/* Navigation Items */}
       <nav className="flex-1 flex flex-col gap-8">
-        {NAV_ITEMS.map((item) => {
+        {filteredNavItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
           
