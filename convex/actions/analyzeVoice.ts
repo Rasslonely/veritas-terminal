@@ -14,7 +14,10 @@ export const verifyTestimony = action({
     claimId: v.id("claims"),
   },
   handler: async (ctx, args) => {
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash" });
+    const model = genAI.getGenerativeModel({ 
+        model: "gemini-2.5-flash",
+        generationConfig: { responseMimeType: "application/json" }
+    });
 
     // 1. Fetch the image execution context
     // In a real scenario, we might need to fetch the image blob if passing directly,
@@ -46,7 +49,7 @@ export const verifyTestimony = action({
         }
     };
 
-    const prompt = `You are a forensic investigator using the Voight-Kampff Protocol.
+    const prompt = `You are a forensic investigator (Gemini 3) using the Voight-Kampff Protocol.
     
     TASK:
     1. Listen to the user's audio testimony explanation of an incident.
@@ -69,8 +72,11 @@ export const verifyTestimony = action({
     ]);
 
     const responseText = result.response.text();
-    const cleanJson = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+    // Use robust extraction
+    const match = responseText.match(/\{[\s\S]*\}/);
+    const cleanJson = match ? match[0] : responseText;
     const analysis = JSON.parse(cleanJson);
+
 
     // 2. LOG TO HEDERA CONSENSUS SERVICE (The Black Box)
     let hcsLogId: string | undefined;

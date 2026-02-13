@@ -7,7 +7,28 @@ import { Id } from "../_generated/dataModel";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-3-flash" });
+const model = genAI.getGenerativeModel({ 
+    model: "gemini-2.5-flash",
+    generationConfig: { responseMimeType: "application/json" }
+});
+
+/**
+ * Robust JSON extraction for newer, more conversational models.
+ */
+function robustJSONParse(text: string) {
+    try {
+        // First try standard parse
+        const cleaned = text.replace(/```json\n?|```/g, "").trim();
+        return JSON.parse(cleaned);
+    } catch (e) {
+        // Fallback: extract the first { ... } block
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+            return JSON.parse(match[0]);
+        }
+        throw e;
+    }
+}
 
 /**
  * The "Brain" of the Evidence Graph.
@@ -26,6 +47,7 @@ export const coordinateInvestigation = action({
       You are the VERITAS Master Orchestrator (ERC-8004 Compliance).
       We are investigating an insurance claim for: ${initialAnalysis.objectDetected}.
       Initial Analysis: ${initialAnalysis.description}
+      Policy Context: ${initialAnalysis.citedPolicy || "N/A"}
       
       Determine if we need specialized investigation branches.
       Potential Branches:
@@ -33,25 +55,25 @@ export const coordinateInvestigation = action({
       - "METADATA": Detailed audit of EXIF data, GPS consistency, and image tampering detection.
       - "LEGAL": Mapping the evidence against specific policy exclusions or coverage thresholds.
       
-      If the claim is straightforward, suggest 1-2 branches. If complex, suggest all 3.
+      Strategy: Synthesize the RAG Policy Context against the evidence provided.
       
       Output strictly in JSON format:
       {
         "requiredBranches": ["BRANCH_TYPE"],
-        "strategy": "string (Why are we taking this approach?)"
+        "strategy": "string (Detailed RAG-aware strategy)"
       }
     `;
 
     const result = await model.generateContent(orchestratorPrompt);
-    const text = result.response.text().replace(/```json\n?|```/g, "").trim();
-    const response = JSON.parse(text);
+    const text = result.response.text();
+    const response = robustJSONParse(text);
     
     // 2. Spawn the root node for the debate
     const rootId = (await ctx.runMutation(internal.debateInternal.insertMessage, {
         claimId,
         agentRole: "SYSTEM",
         agentName: "VERITAS Orchestrator",
-        content: `Fractal Investigation Initiated. Strategy: ${response.strategy}`,
+        content: `Fractal Investigation Initiated (Gemini 3). Strategy: ${response.strategy}`,
         round: 0,
         isOnChain: false,
     }) as unknown) as Id<"debateMessages">;
@@ -114,7 +136,7 @@ export const runBranchDebate = action({
             },
             LEGAL: {
                 lawyer: `You are a Consumer Rights Lawyer. Argue why this specific damage level (${analysis.damageLevel}) yields maximum payout eligibility.`,
-                auditor: `You are a Claims Adjuster. Find policy exclusions that might limit the payout for this specific damage.`
+                auditor: `You are a Claims Adjuster. Find policy exclusions that might limit the payout for this specific damage based on: ${analysis.citedPolicy || "Standard Rules"}.`
             }
         };
 
@@ -158,40 +180,38 @@ export const consolidateInvestigation = action({
         analysis: v.any()
     },
     handler: async (ctx, args): Promise<void> => {
-        // In a real app, we would query the DB for all messages linked to this claimId.
-        // For the demo, we'll have Gemini synthesize the final verdict.
-        
         const verdictPrompt = `
-            You are the VERITAS SUPREME JUDGE.
+            You are the VERITAS SUPREME JUDGE (Gemini 2.5).
             Review the initial evidence: ${JSON.stringify(args.analysis)}
+            Policy: ${args.analysis.citedPolicy || "N/A"}
             
-            The investigation was split into multiple Fractal branches.
             Synthesize all conflicting arguments and issue a final verdict.
-            
-            Format:
-            DECISION: [APPROVED | REJECTED]
-            PAYOUT: [Amount in USDC]
-            REASONING: [1 sentence summary of the synthesized evidence]
+            Output JSON:
+            {
+              "decision": "APPROVED" | "REJECTED",
+              "payout": number,
+              "reasoning": "string"
+            }
         `;
 
         const result = await model.generateContent(verdictPrompt);
-        const verdictText = result.response.text();
+        const verdict = robustJSONParse(result.response.text());
         
         await ctx.runMutation(internal.debateInternal.insertMessage, {
             claimId: args.claimId,
             parentId: args.rootId,
             agentRole: "VERDICT",
             agentName: "VERITAS Supreme Judge",
-            content: verdictText,
-            round: 10, // Final round
+            content: `${verdict.decision}: ${verdict.reasoning}. Payout: $${verdict.payout}`,
+            round: 10,
             isOnChain: true
         });
 
         // Update Claim Status
-        const isApproved = verdictText.includes("APPROVED");
         await ctx.runMutation(internal.debateInternal.updateClaimStatus, {
             claimId: args.claimId,
-            status: isApproved ? "APPROVED" : "REJECTED"
+            status: verdict.decision
         });
     }
 });
+

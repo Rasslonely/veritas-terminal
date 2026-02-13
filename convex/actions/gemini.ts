@@ -31,7 +31,7 @@ export const analyzeEvidence = action({
 
     // 3. Initialize Gemini Model
     const model = genAI.getGenerativeModel({ 
-        model: "gemini-3-flash",
+        model: "gemini-2.5-flash",
         generationConfig: { responseMimeType: "application/json" } 
     });
 
@@ -48,7 +48,7 @@ export const analyzeEvidence = action({
 
     // 4. Prompt Engineering (RAG Enhanced)
     const prompt = `
-      You are VERITAS, an elite AI insurance adjuster.
+      You are VERITAS (Gemini 3), an elite AI insurance adjuster.
       
       === INSURANCE POLICY RULES (STRICT) ===
       ${policyContext || "No specific policy linked. Use standard device insurance principles."}
@@ -85,7 +85,9 @@ export const analyzeEvidence = action({
     
     // 6. Clean and Validate
     try {
-        const cleanedText = text.replace(/```json\n?|```/g, "").trim(); // Strip Markdown
+        // Use a more robust check for JSON since Gemini 3 might wrap it
+        const match = text.match(/\{[\s\S]*\}/);
+        const cleanedText = match ? match[0] : text;
         const json = JSON.parse(cleanedText);
         
         // 7. HCS BLACK BOX LOGGING
@@ -147,9 +149,10 @@ export const verifyLiveness = action({
 
       // 2. Gemini Analysis
       const model = genAI.getGenerativeModel({ 
-          model: "gemini-3-flash",
+          model: "gemini-2.5-flash",
           generationConfig: { responseMimeType: "application/json" } 
       });
+
 
       const prompt = `
         VERITAS LIVENESS CHECK.

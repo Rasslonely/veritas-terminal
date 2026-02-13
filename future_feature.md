@@ -271,6 +271,35 @@ These features have been successfully integrated into the Veritas Core (`convex/
     3.  **Variant-based Rendering**: Single component (`ClaimsList`) supporting multiple structural modes.
 *   **Status:** **LIVE** (Implemented in `ClaimsList.tsx`, `claims/page.tsx`, and `profile/page.tsx`).
 
+## 4.13. 🗺️ Evidence Map Evolution (God-Tier Desktop)
+**Mission:** Transform investigative data into a high-fidelity tactical visualization.
+*   **Mechanism:**
+    1.  **Neural Signals:** Animated data pulses flowing between investigation nodes to visualize active deliberation.
+    2.  **Tactical Nodes:** Custom agent vertices with SVG corner ornaments and pulsing neural cores.
+*   **Status:** **LIVE** (Implemented in `EvidenceGraph.tsx`).
+
+## 4.14. 📱 Parcel-Tracking Adjudication (Mobile)
+**Mission:** High-fidelity vertical progress for field operations.
+*   **Mechanism:**
+    1.  **Milestone Stepper:** Clear vertical progress: *Lodged → Analysis → Conclave → Verdict → Settlement*.
+    2.  **Active Pulsars:** High-intensity neon emerald indicators for the current processing stage.
+*   **Status:** **LIVE & POLISHED** (Implemented in `LinearAdjudicationFeed.tsx` with "Neon Mobility" upgrades).
+
+## 4.15. 🔍 Forensic Audit Overdrive (Deep Analytic)
+**Mission:** Total technical transparency for the elite auditor.
+*   **Mechanism:**
+    1.  **Deep Metadata:** Exposure of *Logic Core*, *Context Weight*, and *Neural Latency*.
+    2.  **Visual Gauges:** High-precision confidence and risk meters with HCS sequence proofs.
+*   **Status:** **LIVE** (Implemented in `AnalysisResult.tsx`).
+
+## 4.16. 🧠 Fractal Tribunal (Chain of Thought)
+**Mission:** Open-box AI reasoning for indisputable consensus.
+*   **Mechanism:**
+    1.  **Reasoning Logs:** Toggleable "Chain of Thought" dropdowns for every agent response.
+    2.  **Tactical Matrix:** Polished terminal-style event logs with pulsing cursors.
+*   **Status:** **LIVE** (Implemented in `DebateThread.tsx` and `MatrixLog.tsx`).
+
+
 ---
 
 # 🦾 5. AI AGENT KNOWLEDGE BASE: Google AI Studio

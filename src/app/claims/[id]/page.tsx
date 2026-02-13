@@ -50,12 +50,14 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
             analysis: claim.initialAnalysis,
             chainMode 
         });
-    } catch (e) {
+    } catch (e: any) {
         console.error("Debate Error", e);
-        alert("Council busy. Retrying connection...");
+        const errorMsg = e.message || "Unknown error";
+        alert(`System Alert: Tribal synchronization failed.\nReason: ${errorMsg}\nRe-establishing neural uplink...`);
     } finally {
         setIsDebating(false);
     }
+
   };
 
   const settleClaim = useAction(api.actions.debate.settleClaim);
@@ -131,7 +133,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
   if (!claim) {
     return (
         <DashboardLayout>
-            <div className="flex h-screen items-center justify-center text-muted-foreground animate-pulse">
+            <div className="flex h-svh items-center justify-center text-muted-foreground animate-pulse">
                 Accessing Secure Record...
             </div>
         </DashboardLayout>
@@ -140,7 +142,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 pb-20">
+      <div className="space-y-6 pb-10 px-4 md:px-0 pt-4 md:pt-0">
         
         {/* Header */}
         <div className="space-y-2">
@@ -169,7 +171,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
 
         {/* Tabs for Context vs Debate */}
         <Tabs defaultValue="debate" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 bg-white/5">
+            <TabsList className="grid w-full grid-cols-3 bg-white/5 h-12">
                 <TabsTrigger value="debate">
                     <Gavel className="w-4 h-4 mr-2" />
                     Tribunal
