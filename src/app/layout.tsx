@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "Veritas Terminal",
   description: "The Autonomous AI Judge",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export const viewport: Viewport = {

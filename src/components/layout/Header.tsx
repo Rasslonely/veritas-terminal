@@ -8,7 +8,7 @@ export function Header() {
       {/* Brand / Logo */}
       <div className="pointer-events-auto flex items-center gap-2">
          <Avatar className="h-8 w-8 border border-white/20">
-            <AvatarImage src="/logo.svg" />
+            <AvatarImage src="/icon.png" className="object-cover" />
             <AvatarFallback className="bg-emerald-900 text-emerald-400 font-bold">V</AvatarFallback>
          </Avatar>
          <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent">

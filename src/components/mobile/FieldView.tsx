@@ -27,7 +27,11 @@ export function FieldView() {
            
            {/* Center Core */}
            <div className="relative z-10 p-6 bg-black/50 backdrop-blur-xl rounded-full ring-1 ring-white/10 shadow-[0_0_50px_rgba(16,185,129,0.3)]">
-              <ShieldCheck className="w-12 h-12 text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+              <img 
+                src="/icon.png" 
+                alt="Veritas Scanner" 
+                className="w-12 h-12 object-contain drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]"
+              />
            </div>
 
            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap">
