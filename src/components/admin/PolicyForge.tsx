@@ -131,12 +131,12 @@ export function PolicyForge() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-8 max-w-7xl mx-auto min-h-[800px]">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-full mx-auto min-h-[800px]">
       
-      {/* Toolbox */}
+      {/* Toolbox (Restored Width) */}
       <div className="lg:col-span-3 space-y-6">
         <div className="p-6 rounded-3xl bg-zinc-900/50 border border-white/5 backdrop-blur-xl">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-6 flex items-center gap-2">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
             <Cpu className="w-4 h-4" /> Logic Toolbox
           </h2>
           
@@ -159,16 +159,16 @@ export function PolicyForge() {
         </div>
 
         <div className="p-6 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 backdrop-blur-xl">
-           <p className="text-xs text-indigo-300 leading-relaxed italic">
-             "Drag blocks into the workspace to architect the truth. Gemini 3 will weave them into an ERC-8004 Service Definition."
+           <p className="text-[10px] text-indigo-300 leading-relaxed italic">
+             "Architect the truth. Gemini 3 weaves ERC-8004 Service Definitions."
            </p>
         </div>
       </div>
 
-      {/* Editor Surface */}
-      <div className="lg:col-span-6 space-y-4">
+      {/* Editor Surface (Optimized) */}
+      <div className="lg:col-span-5 space-y-4">
         {/* Added layoutScroll to Reorder.Group to help with scrolling inside container */}
-        <div className="relative h-[600px] w-full rounded-[40px] border-2 border-dashed border-white/10 bg-black/40 p-8 flex flex-col items-center justify-start gap-4 overflow-y-auto custom-scrollbar scroll-smooth">
+        <div className="relative h-[650px] w-full rounded-[40px] border-2 border-dashed border-white/10 bg-black/40 p-6 flex flex-col items-center justify-start gap-4 overflow-y-auto custom-scrollbar scroll-smooth">
           
           <AnimatePresence>
             {activeBlocks.length === 0 && (
@@ -225,27 +225,27 @@ export function PolicyForge() {
         </div>
       </div>
 
-      {/* Compiler Output */}
-      <div className="lg:col-span-3">
-        <div className="p-6 rounded-3xl bg-black/60 border border-white/5 backdrop-blur-xl h-full flex flex-col">
+      {/* Compiler Output (Balanced) */}
+      <div className="lg:col-span-4">
+        <div className="p-6 rounded-3xl bg-black/60 border border-white/5 backdrop-blur-xl h-full flex flex-col min-h-[700px]">
            <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-6 flex items-center gap-2">
             <Code className="w-4 h-4" /> Agent System Prompt
           </h2>
           
-          <div className="flex-1 font-mono text-[10px] leading-relaxed text-zinc-400 overflow-y-auto custom-scrollbar min-h-[400px]">
+          <div className="flex-1 font-mono text-xs leading-relaxed text-zinc-400 overflow-y-auto custom-scrollbar">
             {compiledResult ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="space-y-4"
+                className="space-y-6"
               >
                 <div className="text-indigo-400 text-xs">// PROMPT_GENERATED_BY_GEMINI_2.5</div>
-                <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-xs font-mono text-zinc-400 max-h-[300px] overflow-y-auto">
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-xs font-mono text-zinc-300 h-[400px] overflow-y-auto shadow-inner">
                     {compiledResult}
                 </div>
 
                 {/* TIMELOCK DEPLOYMENT SIMULATION */}
-                <div className="pt-4 border-t border-white/10">
+                <div className="pt-6 border-t border-white/10">
                     {uplinkStatus === "IDLE" && (
                         <div className="space-y-4">
                             <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-3">
@@ -257,22 +257,22 @@ export function PolicyForge() {
                             </div>
                             <Button 
                                 onClick={handleUplink}
-                                className="w-full h-12 bg-emerald-600 hover:bg-emerald-500 text-white font-bold tracking-widest gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                                className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-white font-bold tracking-widest gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] text-sm"
                             >
-                                <Clock className="w-4 h-4" /> INITIATE TIMELOCK (24H)
+                                <Clock className="w-5 h-5" /> INITIATE TIMELOCK (24H)
                             </Button>
                         </div>
                     )}
 
                     {(uplinkStatus === "SIGNING" || uplinkStatus === "SUBMITTING") && (
-                        <div className="space-y-4 animate-pulse">
-                            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs flex items-center gap-3">
-                                <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-                                <div>
-                                    <p className="font-bold">
+                        <div className="space-y-6 animate-pulse py-8">
+                            <div className="flex flex-col items-center justify-center gap-4 text-amber-400">
+                                <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                                <div className="text-center">
+                                    <p className="font-bold tracking-widest">
                                         {uplinkStatus === "SIGNING" ? "REQUESTING SIGNATURE..." : "BROADCASTING TO BASE SEPOLIA..."}
                                     </p>
-                                    <p className="opacity-70">Please confirm in your wallet.</p>
+                                    <p className="opacity-70 text-xs mt-1">Please confirm in your wallet.</p>
                                 </div>
                             </div>
                         </div>
@@ -284,33 +284,33 @@ export function PolicyForge() {
                             animate={{ scale: 1, opacity: 1 }}
                             className="space-y-4"
                         >
-                            <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-900/50 to-black border border-emerald-500/30 relative overflow-hidden">
+                            <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-900/40 to-black border border-emerald-500/30 relative overflow-hidden shadow-2xl">
                                 <div className="absolute top-0 right-0 p-3 opacity-20">
-                                    <ShieldCheck className="w-20 h-20 text-emerald-500" />
+                                    <ShieldCheck className="w-32 h-32 text-emerald-500 rotate-12 translate-x-10 -translate-y-10" />
                                 </div>
                                 
-                                <h3 className="text-emerald-400 font-bold tracking-widest text-xs uppercase mb-4 flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <h3 className="text-emerald-400 font-bold tracking-widest text-sm uppercase mb-6 flex items-center gap-3">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" />
                                     Deployment Successful
                                 </h3>
 
-                                <div className="space-y-3 font-mono text-[10px] text-zinc-400">
-                                    <div className="flex justify-between">
-                                        <span>STATUS:</span>
-                                        <span className="text-white">QUEUED (Timelock Active)</span>
+                                <div className="space-y-4 font-mono text-xs text-zinc-400 relative z-10">
+                                    <div className="flex justify-between items-center bg-white/5 p-2 rounded-lg">
+                                        <span className="opacity-50">STATUS:</span>
+                                        <span className="text-white font-bold">QUEUED (Timelock Active)</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span>PROPOSAL ID:</span>
-                                        <span className="text-white">0x7f...3a21</span>
+                                    <div className="flex justify-between items-center bg-white/5 p-2 rounded-lg">
+                                        <span className="opacity-50">PROPOSAL ID:</span>
+                                        <span className="text-white font-mono break-all text-[10px]">0x7f8a9...3a21</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span>ETA LIVE:</span>
-                                        <span className="text-amber-400">24 Hours</span>
+                                    <div className="flex justify-between items-center bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
+                                        <span className="text-amber-500/70">ETA LIVE:</span>
+                                        <span className="text-amber-400 font-bold">24 Hours</span>
                                     </div>
                                 </div>
 
-                                <div className="mt-4 pt-4 border-t border-white/5 flex gap-2">
-                                    <Button size="sm" variant="outline" className="flex-1 text-[10px] h-8 border-white/10 bg-black/20">
+                                <div className="mt-6 pt-6 border-t border-white/5 flex gap-3">
+                                    <Button size="sm" variant="outline" className="flex-1 h-10 border-white/10 bg-black/40 hover:bg-white/5 hover:text-emerald-400/80 transition-colors">
                                         <ExternalLink className="w-3 h-3 mr-2" /> View on Etherscan
                                     </Button>
                                 </div>
@@ -320,9 +320,14 @@ export function PolicyForge() {
                 </div>
               </motion.div>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center opacity-20 text-center">
-                <Code className="w-12 h-12 mb-4" />
-                <p>Waiting for compilation...</p>
+                <div className="h-full flex flex-col items-center justify-center opacity-20 text-center gap-4">
+                <div className="w-20 h-20 rounded-full border-2 border-dashed border-zinc-700 flex items-center justify-center">
+                    <Code className="w-8 h-8" />
+                </div>
+                <div>
+                    <p className="font-bold tracking-widest uppercase text-sm">Waiting for compilation...</p>
+                    <p className="text-[10px] mt-1 max-w-[200px] mx-auto">Build your logic blocks on the left and click Compile to generate the Agent Persona.</p>
+                </div>
               </div>
             )}
           </div>

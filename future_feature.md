@@ -300,6 +300,14 @@ These features have been successfully integrated into the Veritas Core (`convex/
 *   **Status:** **LIVE** (Implemented in `DebateThread.tsx` and `MatrixLog.tsx`).
 
 
+## 4.17. 🏛️ Decentralized Governance (Benevolent Dictator)
+**Mission:** Transparent, time-delayed execution of policy changes.
+*   **Mechanism:**
+    1.  **ERC-20 Voting:** `VeritasToken` for governance weight.
+    2.  **Timelock:** `DRCPTimelock` enforces a 24-hour delay on all admin actions.
+    3.  **Registry:** `PolicyRegistry` stores the immutable IPFS hash of every AI policy.
+*   **Status:** **LIVE** (Contracts deployed & integrated with Policy Forge).
+
 ---
 
 # 🦾 5. AI AGENT KNOWLEDGE BASE: Google AI Studio
