@@ -63,14 +63,20 @@ export interface IBlockchainAdapter {
   burnPolicyNFT(tokenId: string, serialNumber: number): Promise<string>;
 }
 
-export async function getAdapter(mode: "HEDERA" | "BASE"): Promise<IBlockchainAdapter> {
+export async function getAdapter(): Promise<IBlockchainAdapter> {
+  const mode = process.env.NEXT_PUBLIC_CHAIN_MODE || "BASE";
+  console.log(`🔌 Initializing Blockchain Adapter: ${mode}`);
+
   if (mode === "HEDERA") {
-    // Dynamic import to avoid loading unused SDKs
     const { HederaAdapter } = await import("./HederaAdapter");
     return new HederaAdapter();
-  } else {
-    // Dynamic import for Base Adapter
-    const { BaseAdapter } = await import("./BaseAdapter");
-    return new BaseAdapter();
-  }
+  } 
+  
+  // For all EVM chains (BASE, ETHERLINK, OPBNB), use the polymorphic EVMAdapter
+  const { EVMAdapter } = await import("./EVMAdapter");
+  
+  if (mode === "ETHERLINK") return new EVMAdapter("ETHERLINK");
+  if (mode === "OPBNB") return new EVMAdapter("OPBNB");
+  
+  return new EVMAdapter("BASE");
 }

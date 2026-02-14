@@ -1,6 +1,7 @@
-import { ethers } from "hardhat";
+import hre from "hardhat";
 
 async function main() {
+  const { ethers } = hre;
   console.log("🚀 Starting Veritas Governance Deployment...");
 
   const [deployer] = await ethers.getSigners();
@@ -15,25 +16,25 @@ async function main() {
   console.log("   ✅ VeritasToken deployed to:", tokenAddress);
 
   // 2. Deploy Timelock (The "Glass Wall")
-  console.log("\n2. Deploying DRCPTimelock...");
+  console.log("\n2. Deploying VeritasTimelock...");
   const minDelay = 120; // 2 minutes for testing (usually 1 day = 86400)
   const proposers: string[] = []; // Empty initially, will add Governor later
   const executors: string[] = []; // Empty initially, will add Governor later
   const admin = deployer.address;
 
-  const DRCPTimelock = await ethers.getContractFactory("DRCPTimelock");
-  const timelock = (await DRCPTimelock.deploy(minDelay, proposers, executors, admin)) as any;
+  const VeritasTimelock = await ethers.getContractFactory("VeritasTimelock");
+  const timelock = (await VeritasTimelock.deploy(minDelay, proposers, executors, admin)) as any;
   await timelock.waitForDeployment();
   const timelockAddress = await timelock.getAddress();
-  console.log("   ✅ DRCPTimelock deployed to:", timelockAddress);
+  console.log("   ✅ VeritasTimelock deployed to:", timelockAddress);
 
   // 3. Deploy Governor (The "Judge")
-  console.log("\n3. Deploying DRCPGovernor...");
-  const DRCPGovernor = await ethers.getContractFactory("DRCPGovernor");
-  const governor = await DRCPGovernor.deploy(tokenAddress, timelockAddress);
+  console.log("\n3. Deploying VeritasGovernor...");
+  const VeritasGovernor = await ethers.getContractFactory("VeritasGovernor");
+  const governor = await VeritasGovernor.deploy(tokenAddress, timelockAddress);
   await governor.waitForDeployment();
   const governorAddress = await governor.getAddress();
-  console.log("   ✅ DRCPGovernor deployed to:", governorAddress);
+  console.log("   ✅ VeritasGovernor deployed to:", governorAddress);
 
   // 4. Deploy Policy Registry (The "Bridge")
   console.log("\n4. Deploying PolicyRegistry...");
@@ -80,11 +81,11 @@ async function main() {
 
   console.log("\n🎉 DEPLOYMENT COMPLETE!");
   console.log("----------------------------------------------------");
-  console.log(`VeritasToken:   ${tokenAddress}`);
-  console.log(`DRCPTimelock:   ${timelockAddress}`);
-  console.log(`DRCPGovernor:   ${governorAddress}`);
-  console.log(`PolicyRegistry: ${policyRegistryAddress}`);
-  console.log(`VeritasVault:   ${vaultAddress}`);
+  console.log(`VeritasToken:    ${tokenAddress}`);
+  console.log(`VeritasTimelock: ${timelockAddress}`);
+  console.log(`VeritasGovernor: ${governorAddress}`);
+  console.log(`PolicyRegistry:  ${policyRegistryAddress}`);
+  console.log(`VeritasVault:    ${vaultAddress}`);
   console.log("----------------------------------------------------");
 }
 

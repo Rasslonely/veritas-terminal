@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
  * @title VeritasAgentID
@@ -11,8 +10,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
  * This NFT represents the "License" of an AI Agent Node in the Veritas Network.
  */
 contract VeritasAgentID is ERC721URIStorage, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    uint256 private _nextTokenId;
 
     // Struct to hold Agent Capabilities
     struct AgentService {
@@ -42,8 +40,8 @@ contract VeritasAgentID is ERC721URIStorage, Ownable {
         onlyOwner
         returns (uint256)
     {
-        _tokenIds.increment();
-        uint256 newItemId = _tokenIds.current();
+        _nextTokenId++;
+        uint256 newItemId = _nextTokenId;
 
         _mint(agentWallet, newItemId);
         _setTokenURI(newItemId, tokenURI);

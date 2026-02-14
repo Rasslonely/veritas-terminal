@@ -2,23 +2,45 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from "dotenv";
 
-console.log("🛠️ Hardhat Config Loading...");
 dotenv.config({ path: ".env.local" });
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.24",
+  solidity: {
+    version: "0.8.24",
+    settings: {
+      evmVersion: "paris",
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
   networks: {
     baseSepolia: {
       url: "https://sepolia.base.org",
       accounts: process.env.BASE_PRIVATE_KEY !== undefined ? [process.env.BASE_PRIVATE_KEY] : [],
       chainId: 84532,
     },
+    etherlinkTestnet: {
+        url: "https://node.shadownet.etherlink.com",
+        accounts: process.env.ETHERLINK_PRIVATE_KEY !== undefined ? [process.env.ETHERLINK_PRIVATE_KEY] : [],
+        chainId: 127823,
+    },
+    opbnbTestnet: {
+        url: "https://opbnb-testnet-rpc.bnbchain.org",
+        accounts: process.env.OPBNB_PRIVATE_KEY !== undefined ? [process.env.OPBNB_PRIVATE_KEY] : [],
+        chainId: 5611,
+    },
     hardhat: {
     },
+  },
+  sourcify: {
+    enabled: false,
   },
   etherscan: {
     apiKey: {
       baseSepolia: process.env.BASESCAN_API_KEY || "",
+      etherlinkTestnet: "empty",
     },
     customChains: [
       {
@@ -27,6 +49,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api-sepolia.basescan.org/api",
           browserURL: "https://sepolia.basescan.org",
+        },
+      },
+      {
+        network: "etherlinkTestnet",
+        chainId: 127823,
+        urls: {
+          apiURL: "https://shadownet.explorer.etherlink.com/api",
+          browserURL: "https://shadownet.explorer.etherlink.com",
         },
       },
     ],

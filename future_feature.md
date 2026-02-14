@@ -308,6 +308,56 @@ These features have been successfully integrated into the Veritas Core (`convex/
     3.  **Registry:** `PolicyRegistry` stores the immutable IPFS hash of every AI policy.
 *   **Status:** **LIVE** (Contracts deployed & integrated with Policy Forge).
 
+## 4.18. 🌐 Multi-Chain Deployment: Etherlink Shadownet (Verified)
+**Mission:** Deploy and verify all Veritas governance contracts on Etherlink Testnet (Shadownet) for cross-chain resilience.
+
+### 🛰️ Network Configuration
+| Parameter | Value |
+|---|---|
+| **Network** | Etherlink Shadownet |
+| **Chain ID** | `127823` |
+| **RPC URL** | `https://node.shadownet.etherlink.com` |
+| **Explorer** | `https://shadownet.explorer.etherlink.com` |
+| **Native Currency** | Tezos (XTZ) |
+| **EVM Version** | `paris` |
+
+### ✅ Deployed & Verified Contracts
+
+| Contract | Address | Explorer |
+|---|---|---|
+| **VeritasToken** | `0x4080ACE95cf319c40F952D2dCCE21b070270f14d` | [View ↗](https://shadownet.explorer.etherlink.com/address/0x4080ACE95cf319c40F952D2dCCE21b070270f14d#code) |
+| **VeritasTimelock** | `0xb38c87D42AA5fbF778e1093c61D5e4a010996EB0` | [View ↗](https://shadownet.explorer.etherlink.com/address/0xb38c87D42AA5fbF778e1093c61D5e4a010996EB0#code) |
+| **VeritasGovernor** | `0x8fA50988f36af835de40153E871689148aE54E49` | [View ↗](https://shadownet.explorer.etherlink.com/address/0x8fA50988f36af835de40153E871689148aE54E49#code) |
+| **PolicyRegistry** | `0x3dAC8B24ee19c807eB9B1932AD789E3D03C1091D` | [View ↗](https://shadownet.explorer.etherlink.com/address/0x3dAC8B24ee19c807eB9B1932AD789E3D03C1091D#code) |
+| **VeritasVault** | `0x7d614118529243DDc5C7ad19F4b89220634d1Ba0` | [View ↗](https://shadownet.explorer.etherlink.com/address/0x7d614118529243DDc5C7ad19F4b89220634d1Ba0#code) |
+
+### 🔧 Issues Encountered & Fixed
+
+1. **`MCOPY` Opcode Error** — Etherlink doesn't support Cancun EVM.
+   - **Fix:** Set `evmVersion: "paris"` in `hardhat.config.ts` and downgraded `@openzeppelin/contracts` to `^5.0.2`.
+
+2. **Deprecated Ghostnet Network** — Initial RPC URL pointed to the old Ghostnet.
+   - **Fix:** Updated to Shadownet RPC (`https://node.shadownet.etherlink.com`) and Chain ID `127823`.
+
+3. **Persistent SSL Handshake Failure (`SSL alert number 40`)** — CLI verification failed repeatedly.
+   - **Root Cause:** Wrong explorer URL. `testnet-explorer.etherlink.com` is the deprecated Ghostnet explorer with broken TLS. The correct Shadownet explorer is `shadownet.explorer.etherlink.com`.
+   - **Fix:** Updated `hardhat.config.ts` etherscan `customChains` to use `https://shadownet.explorer.etherlink.com/api`.
+
+4. **Flatten Pollution** — `console.log("🛠️ Hardhat Config Loading...")` in `hardhat.config.ts` got captured into `.flat.sol` files via stdout redirect.
+   - **Fix:** Removed the `console.log` from `hardhat.config.ts`.
+
+5. **Sourcify Unsupported** — Chain `127823` is not supported by Sourcify, causing secondary errors.
+   - **Fix:** Set `sourcify: { enabled: false }` in `hardhat.config.ts`.
+
+6. **Ambiguous Bytecode (VeritasTimelock)** — Hardhat couldn't disambiguate from OpenZeppelin's `TimelockController`.
+   - **Fix:** Used `--contract contracts/VeritasTimelock.sol:VeritasTimelock` flag.
+
+### 📁 Key Files
+- **Config:** `hardhat.config.ts` (network, etherscan, EVM settings)
+- **Frontend Integration:** `src/lib/contracts.ts` (addresses), `src/lib/config.ts` (chain definition)
+- **Constructor Args:** `scripts/timelock_args.js`, `scripts/governor_args.js`
+- **Status:** **FULLY DEPLOYED & VERIFIED** ✅
+
 ---
 
 # 🦾 5. AI AGENT KNOWLEDGE BASE: Google AI Studio
