@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { 
   Plus, 
   Trash2, 
@@ -16,12 +16,15 @@ import {
   ChevronDown,
   ChevronRight,
   Clock,
-  ExternalLink
+  ExternalLink,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAction, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useAccount } from "wagmi";
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useNetwork } from "@/context/NetworkContext";
+import { getContracts } from "@/lib/contracts";
 
 type BlockType = "TRIGGER" | "RULE" | "THRESHOLD" | "AGENT";
 
@@ -71,31 +74,80 @@ const AVAILABLE_BLOCKS: LogicBlock[] = [
   { id: "a7", type: "AGENT", label: "Compliance Officer", value: "compliance", color: "bg-purple-500" },
 ];
 
+const POLICY_REGISTRY_ABI = [
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_name", "type": "string" },
+      { "internalType": "string", "name": "_ipfsHash", "type": "string" }
+    ],
+    "name": "proposePolicy",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
+
 export function PolicyForge() {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
+  const { explorerUrl, chainName } = useNetwork();
   const user = useQuery(api.users.getUser, address ? { walletAddress: address } : "skip");
   
   const [activeBlocks, setActiveBlocks] = useState<LogicBlock[]>([]);
   const [isCompiling, setIsCompiling] = useState(false);
   const [compiledResult, setCompiledResult] = useState<string | null>(null);
-  const [uplinkStatus, setUplinkStatus] = useState<"IDLE" | "SIGNING" | "SUBMITTING" | "COMPLETE">("IDLE");
+  
+  // Real Blockchain State
+  const { writeContract, data: hash, isPending } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
+
+  // Load from LocalStorage
+  useEffect(() => {
+    const savedBlocks = localStorage.getItem("veritas_forge_blocks");
+    if (savedBlocks) {
+      try {
+        setActiveBlocks(JSON.parse(savedBlocks));
+      } catch (e) {
+        console.error("Failed to load saved blocks", e);
+      }
+    }
+    const savedPrompt = localStorage.getItem("veritas_forge_prompt");
+    if (savedPrompt) setCompiledResult(savedPrompt);
+  }, []);
+
+  // Save to LocalStorage
+  useEffect(() => {
+    localStorage.setItem("veritas_forge_blocks", JSON.stringify(activeBlocks));
+  }, [activeBlocks]);
+
+  useEffect(() => {
+    if (compiledResult) localStorage.setItem("veritas_forge_prompt", compiledResult);
+  }, [compiledResult]);
+
 
   const compileAction = useAction(api.agent.policy_compiler.compilePolicyBlueprint);
 
   const handleUplink = async () => {
-    setUplinkStatus("SIGNING");
-    // Simulate Wallet Signature
-    setTimeout(() => {
-        setUplinkStatus("SUBMITTING");
-        // Simulate Blockchain Transaction
-        setTimeout(() => {
-            setUplinkStatus("COMPLETE");
-        }, 2000);
-    }, 1500);
+    if (!compiledResult || !chainId) return;
+    
+    const contracts = getContracts(chainId);
+    if (!contracts.PolicyRegistry) {
+      alert(`Policy Registry not deployed on ${chainName}`);
+      return;
+    }
+
+    // In a real app, we'd upload the compiledResult JSON to IPFS first.
+    // For this demo, we'll mock the IPFS hash but use the real contract call.
+    const mockIpfsHash = "QmXyZ..." + Date.now().toString(); 
+
+    writeContract({
+      address: contracts.PolicyRegistry as `0x${string}`,
+      abi: POLICY_REGISTRY_ABI,
+      functionName: "proposePolicy",
+      args: ["Veritas Custom Policy", mockIpfsHash],
+    });
   };
 
   const addBlock = (block: LogicBlock) => {
-    // Generate a unique ID to ensure reordering stability
     const uniqueId = `${block.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     setActiveBlocks([...activeBlocks, { ...block, id: uniqueId }]);
   };
@@ -107,7 +159,6 @@ export function PolicyForge() {
   const handleCompile = async () => {
     if (activeBlocks.length === 0) return;
     
-    // For demo, if no user found, use a hardcoded fallback ID or alert
     if (!user) {
         alert("Neural Link Required. Please connect your wallet.");
         return;
@@ -130,10 +181,16 @@ export function PolicyForge() {
     }
   };
 
+  const handleManualSave = () => {
+      localStorage.setItem("veritas_forge_blocks", JSON.stringify(activeBlocks));
+      if (compiledResult) localStorage.setItem("veritas_forge_prompt", compiledResult);
+      alert("Policy Blueprint Saved Locally");
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-full mx-auto min-h-[800px]">
       
-      {/* Toolbox (Restored Width) */}
+      {/* Toolbox */}
       <div className="lg:col-span-3 space-y-6">
         <div className="p-6 rounded-3xl bg-zinc-900/50 border border-white/5 backdrop-blur-xl">
           <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
@@ -165,9 +222,8 @@ export function PolicyForge() {
         </div>
       </div>
 
-      {/* Editor Surface (Optimized) */}
+      {/* Editor Surface */}
       <div className="lg:col-span-5 space-y-4">
-        {/* Added layoutScroll to Reorder.Group to help with scrolling inside container */}
         <div className="relative h-[650px] w-full rounded-[40px] border-2 border-dashed border-white/10 bg-black/40 p-6 flex flex-col items-center justify-start gap-4 overflow-y-auto custom-scrollbar scroll-smooth">
           
           <AnimatePresence>
@@ -218,6 +274,7 @@ export function PolicyForge() {
           </Button>
           <Button 
             variant="outline"
+            onClick={handleManualSave}
             className="h-14 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10"
           >
             <Save className="w-5 h-5" />
@@ -225,7 +282,7 @@ export function PolicyForge() {
         </div>
       </div>
 
-      {/* Compiler Output (Balanced) */}
+      {/* Compiler Output & Deployment */}
       <div className="lg:col-span-4">
         <div className="p-6 rounded-3xl bg-black/60 border border-white/5 backdrop-blur-xl h-full flex flex-col min-h-[700px]">
            <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-6 flex items-center gap-2">
@@ -244,41 +301,52 @@ export function PolicyForge() {
                     {compiledResult}
                 </div>
 
-                {/* TIMELOCK DEPLOYMENT SIMULATION */}
+                {/* TIMELOCK DEPLOYMENT (REAL) */}
                 <div className="pt-6 border-t border-white/10">
-                    {uplinkStatus === "IDLE" && (
+                    {!isSuccess && !hash && (
                         <div className="space-y-4">
                             <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-3">
                                 <ShieldCheck className="w-5 h-5 shrink-0" />
                                 <div>
                                     <p className="font-bold">READY FOR DEPLOYMENT</p>
-                                    <p className="opacity-70">Policy validated. Ready for Timelock (24h).</p>
+                                    <p className="opacity-70">Target: {chainName}</p>
                                 </div>
                             </div>
                             <Button 
                                 onClick={handleUplink}
+                                disabled={isPending}
                                 className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-white font-bold tracking-widest gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] text-sm"
                             >
-                                <Clock className="w-5 h-5" /> INITIATE TIMELOCK (24H)
+                                {isPending ? (
+                                    <><Loader2 className="w-5 h-5 animate-spin" /> SIGNING...</>
+                                ) : (
+                                    <><Clock className="w-5 h-5" /> PROPOSE ON-CHAIN</>
+                                )}
                             </Button>
                         </div>
                     )}
 
-                    {(uplinkStatus === "SIGNING" || uplinkStatus === "SUBMITTING") && (
+                    {hash && isConfirming && (
                         <div className="space-y-6 animate-pulse py-8">
                             <div className="flex flex-col items-center justify-center gap-4 text-amber-400">
                                 <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
                                 <div className="text-center">
-                                    <p className="font-bold tracking-widest">
-                                        {uplinkStatus === "SIGNING" ? "REQUESTING SIGNATURE..." : "BROADCASTING TO BASE SEPOLIA..."}
-                                    </p>
-                                    <p className="opacity-70 text-xs mt-1">Please confirm in your wallet.</p>
+                                    <p className="font-bold tracking-widest">CONFIRMING...</p>
+                                    <p className="opacity-70 text-xs mt-1">Waiting for block confirmation.</p>
+                                    <a 
+                                        href={explorerUrl(hash, "tx")} 
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[10px] text-amber-300 hover:underline mt-2 block"
+                                    >
+                                        View Transaction
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    {uplinkStatus === "COMPLETE" && (
+                    {isSuccess && hash && (
                         <motion.div 
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
@@ -300,8 +368,8 @@ export function PolicyForge() {
                                         <span className="text-white font-bold">QUEUED (Timelock Active)</span>
                                     </div>
                                     <div className="flex justify-between items-center bg-white/5 p-2 rounded-lg">
-                                        <span className="opacity-50">PROPOSAL ID:</span>
-                                        <span className="text-white font-mono break-all text-[10px]">0x7f8a9...3a21</span>
+                                        <span className="opacity-50">TX HASH:</span>
+                                        <span className="text-white font-mono break-all text-[10px]">{hash.slice(0, 10)}...</span>
                                     </div>
                                     <div className="flex justify-between items-center bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
                                         <span className="text-amber-500/70">ETA LIVE:</span>
@@ -310,8 +378,13 @@ export function PolicyForge() {
                                 </div>
 
                                 <div className="mt-6 pt-6 border-t border-white/5 flex gap-3">
-                                    <Button size="sm" variant="outline" className="flex-1 h-10 border-white/10 bg-black/40 hover:bg-white/5 hover:text-emerald-400/80 transition-colors">
-                                        <ExternalLink className="w-3 h-3 mr-2" /> View on Etherscan
+                                    <Button 
+                                        size="sm" 
+                                        variant="outline" 
+                                        className="flex-1 h-10 border-white/10 bg-black/40 hover:bg-white/5 hover:text-emerald-400/80 transition-colors"
+                                        onClick={() => window.open(explorerUrl(hash, "tx"), '_blank')}
+                                    >
+                                        <ExternalLink className="w-3 h-3 mr-2" /> View on Explorer
                                     </Button>
                                 </div>
                             </div>
@@ -326,7 +399,7 @@ export function PolicyForge() {
                 </div>
                 <div>
                     <p className="font-bold tracking-widest uppercase text-sm">Waiting for compilation...</p>
-                    <p className="text-[10px] mt-1 max-w-[200px] mx-auto">Build your logic blocks on the left and click Compile to generate the Agent Persona.</p>
+                    <p className="text-[10px] mt-1 max-w-[200px] mx-auto">Build your logic blocks on the left and click Compile.</p>
                 </div>
               </div>
             )}
