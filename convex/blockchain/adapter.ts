@@ -63,8 +63,8 @@ export interface IBlockchainAdapter {
   burnPolicyNFT(tokenId: string, serialNumber: number): Promise<string>;
 }
 
-export async function getAdapter(): Promise<IBlockchainAdapter> {
-  const mode = process.env.NEXT_PUBLIC_CHAIN_MODE || "BASE";
+export async function getAdapter(chainOverride?: string): Promise<IBlockchainAdapter> {
+  const mode = chainOverride || process.env.NEXT_PUBLIC_CHAIN_MODE || "BASE";
   console.log(`🔌 Initializing Blockchain Adapter: ${mode}`);
 
   if (mode === "HEDERA") {
