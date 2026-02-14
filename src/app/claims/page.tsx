@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 export default function ClaimsPage() {
   return (
     <DashboardLayout>
-      <div className="space-y-6 pb-20">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
             <div className="space-y-1">
                 <h1 className="text-2xl font-bold tracking-tighter text-white flex items-center gap-2">

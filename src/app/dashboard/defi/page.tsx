@@ -14,7 +14,7 @@ export default function DeFiPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto space-y-8 pb-20">
+      <div className="max-w-4xl mx-auto space-y-8">
         <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Earn Yield</h1>
             <p className="text-muted-foreground">

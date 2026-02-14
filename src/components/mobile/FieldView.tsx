@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 export function FieldView() {
   return (
     <DashboardLayout>
-      <div className="flex flex-col items-center justify-center pt-8 text-center space-y-10 min-h-[80vh] w-full">
+      <div className="flex flex-col items-center justify-center text-center space-y-6 min-h-[80vh] w-full">
         
         {/* HERO: Animated Scanner Reticle */}
         <div className="relative group cursor-pointer">
@@ -39,11 +39,11 @@ export function FieldView() {
         </div>
 
         {/* TITLE: Cinematic Typography */}
-        <div className="space-y-2 pt-4">
-          <h1 className="text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-sm">
+        <div className="space-y-2 pt-2">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-sm">
             VERITAS
           </h1>
-          <p className="text-xs text-emerald-500/60 font-mono tracking-[0.3em] uppercase">
+          <p className="text-[10px] md:text-xs text-emerald-500/60 font-mono tracking-[0.3em] uppercase">
             Start Scanning
           </p>
         </div>

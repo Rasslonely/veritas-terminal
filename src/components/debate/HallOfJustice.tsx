@@ -145,6 +145,44 @@ function Scanline() {
     );
 }
 
+function ExpandableText({ text, isFeatured }: { text: string, isFeatured: boolean }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+    // Limit to ~200 chars or 3 lines roughly if not expanded
+    const shouldTruncate = text.length > 150;
+
+    if (!shouldTruncate) {
+         return (
+            <p className={cn(
+                "text-white/70 leading-relaxed font-medium transition-all",
+                isFeatured ? "text-lg italic" : "text-[11px]"
+            )}>
+                "{text}"
+            </p>
+         );
+    }
+
+    return (
+        <div className="space-y-2">
+            <p className={cn(
+                "text-white/70 leading-relaxed font-medium transition-all",
+                isFeatured ? "text-lg italic" : "text-[11px]",
+                !isExpanded && "line-clamp-3"
+            )}>
+                "{text}"
+            </p>
+            <button 
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setIsExpanded(!isExpanded);
+                }}
+                className="text-[9px] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest flex items-center gap-1"
+            >
+                {isExpanded ? "Show Less" : "Read More"}
+            </button>
+        </div>
+    );
+}
+
 export function HallOfJustice() {
   const feed = useQuery(api.feed.getPublicFeed);
   const [displayCount, setDisplayCount] = useState(6);
@@ -195,23 +233,24 @@ export function HallOfJustice() {
 
       <div className="flex items-center justify-between border-b border-white/5 pb-6">
          <div className="space-y-1">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">
-                Hall of Justice
-            </h2>
+            <div className="flex items-center gap-3">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">
+                    Hall of Justice
+                </h2>
+                <Badge variant="outline" className="font-mono text-[10px] py-0.5 px-2 border-emerald-500/30 text-emerald-400 bg-emerald-500/5 animate-pulse whitespace-nowrap">
+                    LIVE FEED
+                </Badge>
+            </div>
             <div className="flex items-center gap-2">
-                <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.3em]">Neural_Nexus_Live_Archive</p>
+                <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.3em]">Neural_Nexus_Archive</p>
                 <div className="h-px w-8 bg-white/10" />
-                <span className="text-[9px] font-mono text-blue-400/50">SECURE_CHANNEL_8004</span>
+                <span className="text-[9px] font-mono text-blue-400/50 hidden md:inline-block">SECURE_CHANNEL_8004</span>
             </div>
          </div>
-         <div className="flex items-center gap-3">
-            <div className="hidden md:flex flex-col items-end">
-                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest leading-none">Status</span>
-                <span className="text-[10px] text-emerald-500 font-mono">UPLINK_STABLE</span>
-            </div>
-            <Badge variant="outline" className="font-mono text-[10px] py-1 px-3 border-blue-500/30 text-blue-400 bg-blue-500/5 animate-pulse">
-                LIVE
-            </Badge>
+         {/* Right side status - hidden on mobile, visible on md */}
+         <div className="hidden md:flex flex-col items-end">
+             <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest leading-none">Status</span>
+             <span className="text-[10px] text-emerald-500 font-mono">UPLINK_STABLE</span>
          </div>
       </div>
 
@@ -343,12 +382,7 @@ export function HallOfJustice() {
                             </div>
 
                             <div className="space-y-4">
-                                <p className={cn(
-                                    "text-white/70 leading-relaxed font-medium",
-                                    isFeatured ? "text-lg italic" : "text-[11px] line-clamp-3"
-                                )}>
-                                "{item.verdictStatement}"
-                                </p>
+                                <ExpandableText text={item.verdictStatement} isFeatured={isFeatured} />
 
                                 {isFeatured && (
                                     <div className="grid grid-cols-2 gap-6 pt-2">

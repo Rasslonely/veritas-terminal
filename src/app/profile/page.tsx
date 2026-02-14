@@ -24,7 +24,7 @@ export default function ProfilePage() {
     
     return (
         <DashboardLayout>
-            <div className="pb-24">
+            <div>
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 content-start">
                     
                     {/* LEFT COLUMN: Identity Dossier */}

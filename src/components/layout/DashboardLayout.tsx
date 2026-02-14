@@ -28,8 +28,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       <main className={cn(
-        "relative z-10 px-6 pt-24 pb-32 max-w-7xl mx-auto w-full transition-all duration-500",
-        "md:pl-32 md:pt-20"
+        "relative z-10 px-6 pt-16 pb-32 max-w-7xl mx-auto w-full transition-all duration-500",
+        "md:pl-32 md:pt-20 md:pb-12"
       )}>
         {children}
       </main>

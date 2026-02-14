@@ -30,7 +30,7 @@ export function MyPortfolio() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* LEFT: Stats & Chart */}
-      <GlassCard className="p-6 space-y-6">
+      <GlassCard className="p-4 md:p-6 space-y-6">
         <div className="flex items-center justify-between">
             <h3 className="font-bold text-lg text-white/90">Asset Allocation</h3>
             <Wallet className="w-5 h-5 text-emerald-400" />
@@ -66,11 +66,11 @@ export function MyPortfolio() {
             </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {data.map((item) => (
                 <div key={item.name} className="flex flex-col items-center p-2 rounded bg-white/5">
                     <div className="w-3 h-3 rounded-full mb-2" style={{ backgroundColor: item.color }} />
-                    <span className="text-[10px] text-muted-foreground">{item.name}</span>
+                    <span className="text-[10px] text-muted-foreground text-center line-clamp-1">{item.name}</span>
                     <span className="text-xs font-bold">${item.value.toLocaleString()}</span>
                 </div>
             ))}

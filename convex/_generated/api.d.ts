@@ -17,6 +17,7 @@ import type * as agent_identity from "../agent/identity.js";
 import type * as agent_orchestrator from "../agent/orchestrator.js";
 import type * as agent_policy_compiler from "../agent/policy_compiler.js";
 import type * as blockchain_BaseAdapter from "../blockchain/BaseAdapter.js";
+import type * as blockchain_EVMAdapter from "../blockchain/EVMAdapter.js";
 import type * as blockchain_HederaAdapter from "../blockchain/HederaAdapter.js";
 import type * as blockchain_adapter from "../blockchain/adapter.js";
 import type * as claims from "../claims.js";
@@ -48,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   "agent/orchestrator": typeof agent_orchestrator;
   "agent/policy_compiler": typeof agent_policy_compiler;
   "blockchain/BaseAdapter": typeof blockchain_BaseAdapter;
+  "blockchain/EVMAdapter": typeof blockchain_EVMAdapter;
   "blockchain/HederaAdapter": typeof blockchain_HederaAdapter;
   "blockchain/adapter": typeof blockchain_adapter;
   claims: typeof claims;
