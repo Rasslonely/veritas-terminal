@@ -69,8 +69,8 @@ export function VerdictCard({
                     <span>{isHighConfidence ? "Claim Approved" : "Manual Review Required"}</span>
                   </div>
                   
-                  <h2 className="text-3xl font-black text-white tracking-tighter">
-                    {isHighConfidence ? "VERDICT: PA YOUT" : "ESCALATED"}
+                  <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-emerald-200 tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                    {isHighConfidence ? "VERDICT: PAYOUT" : "ESCALATED"}
                   </h2>
                 </div>
 

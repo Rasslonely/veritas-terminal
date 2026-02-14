@@ -142,7 +142,7 @@ function ActivePolicies() {
             {policies.map((p) => {
                 const isActive = p.status === "ACTIVE" && p.endTime > Date.now();
                 return (
-                    <HoloCard key={p._id} isActive={isActive} className="p-4">
+                    <HoloCard key={p._id} isActive={isActive} className={cn("p-4 transition-all duration-500", !isActive && "opacity-40 grayscale hover:opacity-100 hover:grayscale-0")}>
                         <div className="flex justify-between items-start">
                              <div className="flex items-center gap-4">
                                 <div className={cn("p-3 rounded-xl transition-colors", isActive ? "bg-emerald-500/20 text-emerald-400" : "bg-white/5 text-muted-foreground")}>
@@ -153,7 +153,7 @@ function ActivePolicies() {
                                     <p className="text-xs text-white/50">{p.assetDescription}</p>
                                 </div>
                              </div>
-                             <Badge variant={isActive ? "default" : "secondary"} className={cn("font-mono", isActive ? "bg-emerald-500 hover:bg-emerald-600" : "")}>
+                             <Badge variant={isActive ? "default" : "secondary"} className={cn("font-mono", isActive ? "bg-emerald-500 hover:bg-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-transparent border border-white/10 text-white/30")}>
                                 {isActive ? "ACTIVE" : "EXPIRED"}
                              </Badge>
                         </div>

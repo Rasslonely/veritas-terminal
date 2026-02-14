@@ -26,26 +26,36 @@
     --radius: 0.5rem;
   }
 
+  /* VERITAS CUSTOM THEME */
   .dark {
+    /* Base: Deep Black with hint of green */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+
+    /* Enhanced Cards */
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
+    
+    /* Neon Accents */
+    --neon-green: 153 100% 50%; /* #00ff9d */
+    --neon-cyan: 180 100% 50%; /* #00ffff */
+    
+    /* UI Elements */
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 153 100% 50%; /* Neon Green Primary */
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 153 100% 50%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --ring: 153 100% 50%;
   }
 }
 
@@ -55,5 +65,46 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .glass-panel {
+    @apply bg-black/40 backdrop-blur-md border border-white/10;
+  }
+  
+  .glass-card {
+    @apply bg-black/60 backdrop-blur-xl border border-white/5 hover:border-[#00ff9d]/30 transition-all duration-300;
+  }
+
+  .text-neon {
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+  }
+
+  .border-neon {
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+  }
+  
+  /* Tactical Scanner Line Animation */
+  @keyframes scanline {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 0% 100%;
+    }
+  }
+
+  .animate-scanline {
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(0, 255, 157, 0.1) 51%,
+      transparent 51%
+    );
+    background-size: 100% 4px;
+    animation: scanline 10s linear infinite;
+    pointer-events: none;
   }
 }

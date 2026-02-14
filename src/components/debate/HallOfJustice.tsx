@@ -115,11 +115,23 @@ function NeuralMeter({ label, value, color = "blue" }: { label: string, value: n
 
 function CornerBrackets() {
     return (
-        <div className="absolute inset-0 pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity duration-700 z-[4]">
-            <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-white/40" />
-            <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-white/40" />
-            <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-white/40" />
-            <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-white/40" />
+        <div className="absolute inset-0 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-500 z-[4]">
+            {/* Top Left */}
+            <svg className="absolute top-2 left-2 w-6 h-6 text-white/60 group-hover:text-[#00ff9d] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <path d="M1 9V1H9" />
+            </svg>
+            {/* Top Right */}
+            <svg className="absolute top-2 right-2 w-6 h-6 text-white/60 group-hover:text-[#00ff9d] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <path d="M23 9V1H15" />
+            </svg>
+            {/* Bottom Left */}
+            <svg className="absolute bottom-2 left-2 w-6 h-6 text-white/60 group-hover:text-[#00ff9d] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <path d="M1 15V23H9" />
+            </svg>
+            {/* Bottom Right */}
+            <svg className="absolute bottom-2 right-2 w-6 h-6 text-white/60 group-hover:text-[#00ff9d] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <path d="M23 15V23H15" />
+            </svg>
         </div>
     );
 }
@@ -250,11 +262,11 @@ export function HallOfJustice() {
                         
                         <div className="absolute top-4 left-4 flex gap-2 z-[3]">
                             {item.status === "APPROVED" ? (
-                                <div className="p-1 px-3 rounded-sm bg-emerald-500 text-[10px] font-black text-black flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                                <div className="p-1 px-3 rounded-none bg-emerald-500/10 border border-emerald-500/50 text-[10px] font-black text-emerald-400 flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.2)] backdrop-blur-md">
                                     <CheckCircle2 className="w-3 h-3 stroke-[3]" /> VERIFIED
                                 </div>
                             ) : (
-                                <div className="p-1 px-3 rounded-sm bg-red-500 text-[10px] font-black text-white flex items-center gap-1.5 shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+                                <div className="p-1 px-3 rounded-none bg-red-500/10 border border-red-500/50 text-[10px] font-black text-red-400 flex items-center gap-1.5 shadow-[0_0_15px_rgba(239,68,68,0.2)] backdrop-blur-md">
                                     <XCircle className="w-3 h-3 stroke-[3]" /> FRAUD
                                 </div>
                             )}

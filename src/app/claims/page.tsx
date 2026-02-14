@@ -28,10 +28,14 @@ export default function ClaimsPage() {
                     LIVE_HCS_SYNC
                 </div>
                 <Link href="/scan">
-                    <Button size="sm" className="bg-emerald-500 text-black hover:bg-emerald-400 font-bold tracking-tighter uppercase text-[10px]">
-                        <Plus className="w-3 h-3 mr-1" />
-                        INITIATE_SCAN
-                    </Button>
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-emerald-500/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Button size="sm" className="relative bg-emerald-500 text-black hover:bg-emerald-400 font-black tracking-widest uppercase text-[10px] border-b-4 border-emerald-700 hover:border-emerald-500 active:border-b-0 active:translate-y-1 transition-all h-9 px-6 shadow-xl">
+                            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(0,0,0,0.1)_25%,rgba(0,0,0,0.1)_50%,transparent_50%,transparent_75%,rgba(0,0,0,0.1)_75%,rgba(0,0,0,0.1)_100%)] bg-[size:8px_8px] opacity-20" />
+                            <Plus className="w-3 h-3 mr-2" />
+                            INITIATE_SCAN
+                        </Button>
+                    </div>
                 </Link>
             </div>
         </div>

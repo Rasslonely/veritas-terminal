@@ -71,11 +71,11 @@ export function ClaimsList({ variant = "dossier", userId }: ClaimsListProps) {
                 /* HIGH-DENSITY LEDGER VIEW (Archives) */
                 <div className="w-full overflow-hidden rounded-xl border border-white/5 bg-black/20 backdrop-blur-xl">
                     <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10 bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
-                        <div className="col-span-3">Nexus_ID</div>
-                        <div className="col-span-4">Object_Manifest</div>
+                        <div className="col-span-2">Nexus_ID</div>
+                        <div className="col-span-3">Object_Manifest</div>
+                        <div className="col-span-3"><span className="flex items-center gap-1"><Hash className="w-3 h-3" /> TX_Hash</span></div>
                         <div className="col-span-2 text-center">HCS_Status</div>
                         <div className="col-span-2 text-right">Timestamp</div>
-                        <div className="col-span-1"></div>
                     </div>
                     <motion.div 
                         initial="hidden"
@@ -87,29 +87,40 @@ export function ClaimsList({ variant = "dossier", userId }: ClaimsListProps) {
                                 <Link key={claim._id} href={`/claims/${claim._id}`}>
                                     <motion.div
                                         variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
-                                        className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-white/5 hover:bg-emerald-500/5 transition-colors items-center group cursor-pointer"
+                                        className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-white/5 hover:bg-emerald-500/10 transition-colors items-center group cursor-pointer relative overflow-hidden"
                                     >
-                                        <div className="col-span-3 font-mono text-[11px] text-emerald-400">
-                                            NXS-{claim._id.substring(claim._id.length - 6).toUpperCase()}
+                                        {/* Hover Scanline */}
+                                        <div className="absolute inset-0 bg-emerald-500/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none" />
+                                        
+                                        <div className="col-span-2 font-mono text-[11px] text-emerald-400 font-bold">
+                                            {claim._id.substring(claim._id.length - 6).toUpperCase()}
                                         </div>
-                                        <div className="col-span-4 flex items-center gap-3">
+                                        <div className="col-span-3 flex items-center gap-3">
                                             <div className="w-6 h-6 rounded bg-white/5 border border-white/10 overflow-hidden shrink-0">
                                                 <img src={claim.evidenceImageUrl} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
                                             </div>
-                                            <span className="text-[12px] font-medium text-white/80 line-clamp-1">
+                                            <span className="text-[12px] font-medium text-white/80 line-clamp-1 group-hover:text-white transition-colors">
                                                 {claim.initialAnalysis?.objectDetected || "Unknown Object"}
                                             </span>
                                         </div>
+                                        <div className="col-span-3 font-mono text-[10px] text-white/30">
+                                            {claim.settlementTxHash ? (
+                                                <span className="text-emerald-500/50 flex items-center gap-1 group-hover:text-emerald-400 transition-colors">
+                                                    <ShieldCheck className="w-3 h-3" /> {claim.settlementTxHash.slice(0, 12)}...
+                                                </span>
+                                            ) : (
+                                                <span className="flex items-center gap-1">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500/50" /> Pending_Block
+                                                </span>
+                                            )}
+                                        </div>
                                         <div className="col-span-2 flex justify-center">
-                                            <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 font-mono", getStatusColor(claim.status))}>
+                                            <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 font-mono shadow-[0_0_10px_rgba(0,0,0,0.2)]", getStatusColor(claim.status))}>
                                                 {claim.status}
                                             </Badge>
                                         </div>
-                                        <div className="col-span-2 text-right text-[10px] text-white/40 font-mono">
+                                        <div className="col-span-2 text-right text-[10px] text-white/40 font-mono group-hover:text-white/60 transition-colors">
                                             {formatDistanceToNow(claim.createdAt)}
-                                        </div>
-                                        <div className="col-span-1 flex justify-end">
-                                            <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-emerald-400 transition-all" />
                                         </div>
                                     </motion.div>
                                 </Link>
