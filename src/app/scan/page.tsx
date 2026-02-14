@@ -17,7 +17,10 @@ import { LivenessChallenge } from "@/components/claim/LivenessChallenge";
 import { useHaptic } from "@/hooks/useHaptic";
 import { useAudio } from "@/hooks/useAudio";
 
+import { useNetwork } from "@/context/NetworkContext";
+
 export default function ScanPage() {
+  const { chainMode, chainName } = useNetwork();
   const router = useRouter();
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const analyzeEvidence = useAction(api.actions.gemini.analyzeEvidence);
@@ -156,13 +159,15 @@ export default function ScanPage() {
         // In reality, we call the action
         const stakeTx = await stakeTruthBond({
             amount: 5,
-            chain: "BASE",
+            chain: chainMode, // Dynamic Chain
             userAddress: "0xUserWallet..." // Mock for demo
         });
         
         setIsStaking(false);
         playSuccess();
         notification.success();
+        // Optional: specific toast for chain
+        // toast.success(`Staked 5 USDC on ${chainName}`);
         
         // 2. CREATE CLAIM (With Stake Proof)
         impact.heavy();

@@ -24,6 +24,7 @@ export function Header() {
 
       {/* Network Toggle Pill */}
       <div className="pointer-events-auto bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-1 flex items-center gap-1 shadow-2xl">
+        {/* Hedera Toggle */}
         <button
           onClick={() => setChainMode("HEDERA")}
           className={cn(
@@ -41,6 +42,9 @@ export function Header() {
           <span className="relative z-10">HEDERA</span>
         </button>
 
+        {/* EVM Chain Toggle (Cycling or Dropdown - for now simple cycle/select) */}
+        {/* Simplified for demo: separate buttons for active testing chains */}
+        
         <button
           onClick={() => setChainMode("BASE")}
           className={cn(
@@ -58,6 +62,25 @@ export function Header() {
           <span className="relative z-10 flex items-center gap-1">
             BASE
             {chainMode === "BASE" && <Zap className="w-3 h-3 fill-white" />}
+          </span>
+        </button>
+
+         <button
+          onClick={() => setChainMode("ETHERLINK")}
+          className={cn(
+            "relative px-3 py-1.5 rounded-full text-[10px] font-bold transition-all duration-300 flex items-center gap-1",
+            chainMode === "ETHERLINK" ? "text-white" : "text-white/50 hover:text-white"
+          )}
+        >
+           {chainMode === "ETHERLINK" && (
+            <motion.div
+              layoutId="network-pill"
+              className="absolute inset-0 bg-emerald-500 rounded-full"
+              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+            />
+          )}
+          <span className="relative z-10 flex items-center gap-1">
+            ETHERLINK
           </span>
         </button>
       </div>

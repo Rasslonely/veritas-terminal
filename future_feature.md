@@ -354,9 +354,9 @@ These features have been successfully integrated into the Veritas Core (`convex/
 
 ### 📁 Key Files
 - **Config:** `hardhat.config.ts` (network, etherscan, EVM settings)
-- **Frontend Integration:** `src/lib/contracts.ts` (addresses), `src/lib/config.ts` (chain definition)
+- **Frontend Integration:** `src/lib/contracts.ts` (addresses), `src/lib/config.ts` (chain definition), `NetworkContext.tsx`
 - **Constructor Args:** `scripts/timelock_args.js`, `scripts/governor_args.js`
-- **Status:** **FULLY DEPLOYED & VERIFIED** ✅
+- **Status:** **DEPLOYED, VERIFIED & INTEGRATED** ✅
 
 ---
 

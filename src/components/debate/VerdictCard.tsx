@@ -147,7 +147,11 @@ export function VerdictCard({
   );
 }
 
+import { useNetwork } from "@/context/NetworkContext";
+
 function ReceiptView({ hash, amount, claimId }: { hash: string, amount: string, claimId: string }) {
+    const { explorerUrl, chainName } = useNetwork();
+    
     return (
         <motion.div
             initial={{ opacity: 0, y: 20, rotateX: 20 }}
@@ -192,12 +196,16 @@ function ReceiptView({ hash, amount, claimId }: { hash: string, amount: string, 
                                 <Copy className="w-3 h-3 text-white/20 cursor-pointer hover:text-white" />
                              </div>
                          </div>
+                         <div className="flex justify-between items-center text-xs">
+                             <span className="text-white/40 uppercase tracking-widest">Network</span>
+                             <span className="font-mono text-emerald-400 text-[10px] uppercase">{chainName}</span>
+                         </div>
                     </div>
 
                     <Button 
                         variant="ghost" 
                         className="w-full text-xs text-white/30 hover:text-emerald-400 hover:bg-emerald-950/30 uppercase tracking-widest"
-                        onClick={() => window.open(`https://sepolia.basescan.org/tx/${hash}`, '_blank')}
+                        onClick={() => window.open(explorerUrl(hash, "tx"), '_blank')}
                     >
                         View on Block Explorer ↗
                     </Button>
