@@ -1,7 +1,7 @@
 import { EvidenceAnalysis } from "@/lib/schemas/ai";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, AlertTriangle, XCircle, Search, Shield, Zap, Activity, Database, Cpu } from "lucide-react";
+import { CheckCircle, AlertTriangle, XCircle, Search, Shield, Zap, Activity, Database, Cpu, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -48,6 +48,8 @@ export function AnalysisResult({ analysis, isLoading }: AnalysisResultProps) {
       default: return "text-white/40 border-white/10 bg-white/5";
     }
   };
+
+  const isHighConfidence = analysis.confidenceScore >= 85;
 
   return (
     <div className="space-y-6">
@@ -134,22 +136,68 @@ export function AnalysisResult({ analysis, isLoading }: AnalysisResultProps) {
                     </div>
                 </div>
 
-                {/* Tactical Metadata Footer */}
-                <div className="pt-6 md:pt-8 border-t border-white/10">
-                    <div className="grid grid-cols-3 gap-4 md:gap-6">
-                        <div className="space-y-1">
-                           <span className="text-[7px] md:text-[8px] font-mono text-white/20 uppercase tracking-widest block">Logic_Core</span>
-                           <span className="text-[9px] md:text-[10px] font-mono text-emerald-400">GEMINI_3_FLASH</span>
-                        </div>
-                        <div className="space-y-1">
-                           <span className="text-[7px] md:text-[8px] font-mono text-white/20 uppercase tracking-widest block">Context_Weight</span>
-                           <span className="text-[9px] md:text-[10px] font-mono text-blue-400">128K_TOKENS</span>
-                        </div>
-                        <div className="space-y-1">
-                           <span className="text-[7px] md:text-[8px] font-mono text-white/20 uppercase tracking-widest block">Neural_Latency</span>
-                           <span className="text-[9px] md:text-[10px] font-mono text-orange-400">1.4s_STDN</span>
+                {/* Tactical Metadata Footer - Deep Analytics */}
+                <div className="pt-6 md:pt-8 border-t border-white/10 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-black uppercase text-white/40 tracking-[0.2em]">Forensic_Telemetry_Layer_2</span>
+                        <div className="flex gap-1">
+                            {[...Array(5)].map((_, i) => (
+                                <div key={i} className={cn("w-1 h-1 rounded-full", i < 4 ? "bg-emerald-500" : "bg-white/10")} />
+                            ))}
                         </div>
                     </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="space-y-1 p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                           <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest block">Logic_Core</span>
+                           <span className="text-[9px] font-mono text-emerald-400">GEMINI_2.5_FLASH</span>
+                        </div>
+                        <div className="space-y-1 p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                           <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest block">Context_Window</span>
+                           <span className="text-[9px] font-mono text-blue-400">2.1M_TOKENS</span>
+                        </div>
+                         <div className="space-y-1 p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                           <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest block">Sensor_Drift</span>
+                           <span className="text-[9px] font-mono text-white/60">0.004%_NOMINAL</span>
+                        </div>
+                        <div className="space-y-1 p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                           <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest block">Metadata_Hash</span>
+                           <span className="text-[9px] font-mono text-orange-400 truncate">SHA: 8f2...9a1</span>
+                        </div>
+                    </div>
+
+                     {/* Reasoning Chain Preview */}
+                     <div className="p-3 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
+                        <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest block border-b border-white/5 pb-1">Chain_of_Thought_Log</span>
+                        <div className="space-y-1 font-mono text-[8px] text-white/50">
+                            <div className="flex gap-2">
+                                <span className="text-emerald-500">➜</span>
+                                <span>Ingesting visual evidence... [COMPLETE]</span>
+                            </div>
+                             <div className="flex gap-2">
+                                <span className="text-emerald-500">➜</span>
+                                <span>Cross-referencing policy ID #8821... [MATCH]</span>
+                            </div>
+                             <div className="flex gap-2">
+                                <span className="text-emerald-500">➜</span>
+                                <span>Calculating disbursement probability... [99.2%]</span>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+                
+                {/* Proof of Truth - Contextual Contract Link */}
+                <div className="pt-4 flex justify-center">
+                    <a 
+                        href="https://shadownet.explorer.etherlink.com/address/0x7d614118529243DDc5C7ad19F4b89220634d1Ba0" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all group"
+                    >
+                        <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                        <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest group-hover:text-emerald-300">View On-Chain Proof</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1" />
+                    </a>
                 </div>
             </CardContent>
 

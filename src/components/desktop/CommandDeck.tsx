@@ -135,15 +135,17 @@ export function CommandDeck() {
             
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300 group">
-                    <p className="text-[10px] text-emerald-500/70 uppercase tracking-wider">Total Value Secured</p>
-                    <p className="text-2xl font-bold text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] font-mono group-hover:text-emerald-400 transition-colors">
-                         ${totalSecured.toLocaleString()}
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300 group overflow-hidden">
+                    <p className="text-[10px] text-emerald-500/70 uppercase tracking-wider truncate">Total Value Secured</p>
+                    <p className="text-xl md:text-2xl font-bold text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] font-mono group-hover:text-emerald-400 transition-colors truncate">
+                         ${new Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(totalSecured)}
                     </p>
                 </div>
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 group">
-                    <p className="text-[10px] text-red-500/70 uppercase tracking-wider">Fraud Blocked</p>
-                    <p className="text-2xl font-bold text-red-400 drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] font-mono group-hover:text-red-500 transition-colors">843</p>
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 group overflow-hidden">
+                    <p className="text-[10px] text-red-500/70 uppercase tracking-wider truncate">Fraud Blocked</p>
+                    <p className="text-xl md:text-2xl font-bold text-red-400 drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] font-mono group-hover:text-red-500 transition-colors truncate">
+                        {new Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(843)}
+                    </p>
                 </div>
                 <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg col-span-2 hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300">
                     <p className="text-[10px] text-emerald-500/70 uppercase tracking-wider">Active Field Agents</p>
