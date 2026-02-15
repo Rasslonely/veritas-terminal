@@ -190,10 +190,11 @@ export default function ScanPage() {
         setChallenge(challengeText);
         setShowLivenessOverlay(true);
 
-    } catch (e) {
+    } catch (e: any) {
         console.error("Claim/Stake Failed", e);
         playError();
-        alert("Failed to post Truth Bond. Claim aborted.");
+        // Show specific error to help debugging
+        alert(`Failed to post Truth Bond. Reason: ${e.message || "Unknown Error"}`);
         setIsStaking(false);
     } finally {
         setIsCreating(false);

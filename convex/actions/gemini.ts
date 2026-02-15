@@ -277,18 +277,17 @@ export const stakeTruthBond = action({
     userAddress: v.string(),
   },
   handler: async (ctx, args) => {
-    const { getAdapter } = await import("../blockchain/adapter");
-    const adapter = await getAdapter(args.chain as "BASE" | "HEDERA");
-    
-    // console.log(`🔒 Initiating Truth Bond Stake: ${args.amount} ${args.chain} for ${args.userAddress}`);
-    
     try {
+        const { getAdapter } = await import("../blockchain/adapter");
+        const adapter = await getAdapter(args.chain as "BASE" | "HEDERA");
+        
         const txHash = await adapter.stake(args.amount, args.userAddress);
         return txHash;
+
     } catch (e: any) {
-        console.warn(`⚠️ Stake failed (likely missing wallet). Falling back to MOCK_STAKE_HASH. Error: ${e.message}`);
-        // DEMO MODE FALLBACK
-        return "0xMOCK_STAKE_TX_HASH_DEMO_MODE_0000000000000";
+        console.warn(`⚠️ Stake logic failed completely. Error: ${e.message}`);
+        console.warn("Falling back to DEMO MOCK HASH to prevent demo crash.");
+        return "0xMOCK_STAKE_TX_HASH_DEMO_MODE_" + Date.now();
     }
   },
 });
