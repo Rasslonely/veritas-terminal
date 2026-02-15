@@ -1,8 +1,6 @@
 # 🏛️ VERITAS TERMINAL
 > **"Trust Physics. Not People."**
 
-![Veritas Terminal Banner](public/og-image.png)
-
 ## 🔭 The Vision
 **Veritas Terminal** is the world's first **Autonomous Truth Infrastructure**. 
 We replace the "Claims Adjuster" with **Computer Vision**, and the "Jury" with **Multi-Agent Debate**.
