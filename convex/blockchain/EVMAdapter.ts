@@ -42,6 +42,17 @@ export class EVMAdapter implements IBlockchainAdapter {
     else if (chainKey === "ETHERLINK") pKey = process.env.ETHERLINK_PRIVATE_KEY;
     else if (chainKey === "OPBNB") pKey = process.env.OPBNB_PRIVATE_KEY;
 
+    // DEBUG LOGGING (Masked)
+    if (pKey) {
+        console.log(`✅ ${chainKey}_PRIVATE_KEY loaded. Length: ${pKey.length}`);
+        if (!pKey.startsWith("0x")) {
+             console.warn(`⚠️ ${chainKey}_PRIVATE_KEY missing '0x' prefix. Auto-fixing.`);
+             pKey = `0x${pKey}`;
+        }
+    } else {
+        console.warn(`⚠️ ${chainKey}_PRIVATE_KEY is UNDEFINED in process.env`);
+    }
+
     if (!pKey) {
         console.warn(`⚠️ ${chainKey}_PRIVATE_KEY missing. EVMAdapter (${chainKey}) in read-only mode.`);
     }

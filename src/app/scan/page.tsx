@@ -226,7 +226,7 @@ export default function ScanPage() {
         />
       )}
 
-      <div className="flex flex-col h-[calc(100vh-140px)] w-full max-w-md mx-auto relative pt-24">
+      <div className="flex flex-col h-[calc(100vh-140px)] w-full max-w-md mx-auto relative">
         <div className="flex-1 flex flex-col items-center justify-start space-y-8 overflow-y-auto pb-20">
           
           {capturedImage ? (
