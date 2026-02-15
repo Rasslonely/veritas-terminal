@@ -8,6 +8,8 @@ import { CheckCircle2, AlertTriangle, Loader2, DollarSign, Wallet, Receipt, Copy
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useHaptics } from "@/hooks/useHaptics";
+import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 interface VerdictCardProps {
   claimId: string;
@@ -27,6 +29,8 @@ export function VerdictCard({
   
   const { payoutClaim, isConfirming, isProcessing, isConfirmed, hash } = useVeritasVault();
   const { triggerHaptic } = useHaptics();
+  const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
 
   // Simulation State for UI Demo
   const [isSimulating, setIsSimulating] = useState(false);
@@ -125,26 +129,40 @@ export function VerdictCard({
                       </span>
                     </div>
 
-                    <Button 
-                      onClick={handleClaim}
-                      disabled={showProcessing}
-                      className={cn(
-                        "w-full h-12 text-sm font-bold tracking-widest uppercase transition-all duration-300 relative overflow-hidden group",
-                        "bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
-                      )}
-                    >
-                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                      
-                      {showProcessing ? (
-                        <span className="flex items-center gap-2 relative z-10">
-                          <Loader2 className="w-4 h-4 animate-spin" /> Verifying Proof...
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2 relative z-10">
-                          <Zap className="w-4 h-4 fill-black" /> Instant Claim
-                        </span>
-                      )}
-                    </Button>
+                    {isConnected ? (
+                        <Button 
+                          onClick={handleClaim}
+                          disabled={showProcessing}
+                          className={cn(
+                            "w-full h-12 text-sm font-bold tracking-widest uppercase transition-all duration-300 relative overflow-hidden group",
+                            "bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
+                          )}
+                        >
+                          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                          
+                          {showProcessing ? (
+                            <span className="flex items-center gap-2 relative z-10">
+                              <Loader2 className="w-4 h-4 animate-spin" /> Verifying Proof...
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-2 relative z-10">
+                              <Zap className="w-4 h-4 fill-black" /> Instant Claim
+                            </span>
+                          )}
+                        </Button>
+                    ) : (
+                        <Button 
+                          onClick={openConnectModal}
+                          className={cn(
+                            "w-full h-12 text-sm font-bold tracking-widest uppercase transition-all duration-300 relative overflow-hidden group",
+                            "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+                          )}
+                        >
+                          <span className="flex items-center gap-2 relative z-10">
+                            <Wallet className="w-4 h-4" /> Connect Wallet to Claim
+                          </span>
+                        </Button>
+                    )}
                   </div>
                 )}
               </div>
