@@ -43,7 +43,7 @@ export function FieldView() {
         </div>
 
         {/* TITLE: Cinematic Typography */}
-        <div className="space-y-2 pt-2">
+        <div className="space-y-2 pt-16">
           <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-sm">
             VERITAS
           </h1>
